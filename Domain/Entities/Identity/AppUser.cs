@@ -1,0 +1,28 @@
+﻿using Domain.Entities.BaseEntities;
+using Domain.Entities.Commons;
+using Domain.Entities.ConcretEntities;
+using Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+
+namespace ETicaretAPI.Domain.Entities.Identity
+{
+    public class AppUser : IdentityUser<int>, IBaseEntity<int>, ISoftDelete
+    {
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenEndDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+
+        public bool IsOnline { get; set; }
+
+        public virtual ICollection<AppUserRole>? UserRoles { get; set; }
+        public bool IsDeleted { get; set; }
+
+        public virtual ICollection<Message>? FromMessages { get; set; }
+        public virtual ICollection<Message>? ToMessages { get; set; }
+        public AppUser()
+        {
+            UserRoles = new HashSet<AppUserRole>();
+        }
+    }
+}

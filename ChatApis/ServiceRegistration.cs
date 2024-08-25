@@ -1,0 +1,21 @@
+﻿using Application.Abstractions.Services;
+using ChatApis.Helpers;
+using CompositionRoot;
+using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Persistence.DbContexts;
+
+
+namespace ProductMVC;
+
+public static class ServiceRegistration
+{
+    public static IServiceCollection AddPresentationService(this IServiceCollection services,IConfiguration configuration)
+    {
+        services.AddScoped<HttpResult>();
+        services.AddApplicationDependencies(configuration);
+        services.AddHttpContextAccessor();
+        services.AddSignalR();
+        return services;
+    }
+}

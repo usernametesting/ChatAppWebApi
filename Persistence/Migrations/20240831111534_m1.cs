@@ -180,14 +180,19 @@ namespace Persistence.Migrations
                 name: "UserTokens",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Expires = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_UserTokens", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserTokens_Users_UserId",
                         column: x => x.UserId,
@@ -204,7 +209,7 @@ namespace Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
-                values: new object[] { 1, 0, "86f6e50f-25ac-40d3-8e1a-a360087f11de", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@example.com", true, false, false, false, null, "ADMIN@EXAMPLE.COM", "ADMIN", "AQAAAAIAAYagAAAAEM003kHsGXLsqPU1qvQicpzn8Sk8vxIAywU+tclAkn9w9rOWDjRutwoWxTC7Nm9uCw==", null, false, null, null, "b015d914-665e-4d50-95ef-9c88fd5565b1", false, null, "admin" });
+                values: new object[] { 1, 0, "6eb7d94d-6430-4fbc-8bfb-2a4b6e16969d", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@example.com", true, false, false, false, null, "ADMIN@EXAMPLE.COM", "ADMIN", "AQAAAAIAAYagAAAAEKBcYMRcdP0ph6Z31jmZsOts9WjDkvTfmSV0/Q+6OTsXeY/4McJzZnWIQFj5mP0WTw==", null, false, null, null, "3fe49ba8-043b-48e5-a3fa-f3565db4264b", false, null, "admin" });
 
             migrationBuilder.InsertData(
                 table: "UsersRoles",
@@ -295,6 +300,13 @@ namespace Persistence.Migrations
                 name: "IX_UsersRoles_RoleId",
                 table: "UsersRoles",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTokens_UserId_LoginProvider_Name",
+                table: "UserTokens",
+                columns: new[] { "UserId", "LoginProvider", "Name" },
+                unique: true,
+                filter: "[LoginProvider] IS NOT NULL AND [Name] IS NOT NULL");
         }
 
         /// <inheritdoc />

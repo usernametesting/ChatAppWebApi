@@ -2,6 +2,7 @@
 using Application.DTOs.RoleDTOs;
 using ChatApis.Helpers;
 using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace ChatApis.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class RoleController : ControllerBase
 {
     private readonly IRoleService _roleService;
@@ -19,33 +21,28 @@ public class RoleController : ControllerBase
         _roleService = roleService;
         _httpResult = checker;
     }
-
+    [HttpGet("GetAll")]
     public async Task<IActionResult> GetAll()
     {
         var result = await _roleService.GetAllAsync();
         return await _httpResult.Result(result);
     }
 
-    [HttpPost]
+    [HttpPost("Add")]
 
     public async Task<IActionResult> Add(AddRoleDTO model)
     {
         var result = await _roleService.Add(model);
         return await _httpResult.Result(result);
     }
-
-    public async Task<IActionResult> Edit(int Id)
-    {
-        var result = await _roleService.GetByIdAsync(Id);
-        return await _httpResult.Result(result);
-    }
-    [HttpPost]
+    
+    [HttpPost("Edit")]
     public async Task<IActionResult> Edit(UpdateRoleDTO model)
     {
         var result = await _roleService.Update(model.Id, model);
         return await _httpResult.Result(result);
     }
-
+    [HttpDelete("Delete")]
     public async Task<IActionResult> Delete(int Id)
     {
         var result = await _roleService.Delete(Id);

@@ -16,14 +16,28 @@ public class CustomUserManager<TUser> : UserManager<TUser> where TUser : class
     {
     }
 
-    public override async Task<IdentityResult> UpdateAsync(TUser user)
+    private void EnsureSecurityStamp(TUser user)
     {
         var securityStampProperty = typeof(TUser).GetProperty("SecurityStamp");
-        if (securityStampProperty != null)
+        if (securityStampProperty != null && securityStampProperty.GetValue(user) == null)
         {
-            securityStampProperty.SetValue(user, Guid.NewGuid().ToString());
+            var currentSecurityStamp = securityStampProperty.GetValue(user);
+            if (currentSecurityStamp == null)
+            {
+                securityStampProperty.SetValue(user, Guid.NewGuid().ToString());
+            }
         }
+    }
 
+    public override async Task<IdentityResult> CreateAsync(TUser user)
+    {
+        EnsureSecurityStamp(user);  
+        return await base.CreateAsync(user);
+    }
+
+    public override async Task<IdentityResult> UpdateAsync(TUser user)
+    {
+        EnsureSecurityStamp(user); 
         return await base.UpdateAsync(user);
     }
 }

@@ -21,11 +21,14 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
                .HasForeignKey(ur => ur.UserId)
                .IsRequired();
 
+        builder.HasMany(u => u.UserTokens)
+            .WithOne(ur => ur.User)
+            .HasForeignKey(ur => ur.UserId);
+
         builder.HasIndex(u => u.NormalizedUserName).IsUnique(false);
         builder.HasIndex(u => u.NormalizedEmail).IsUnique(false);
         builder.HasIndex(u => u.Email).IsUnique(false);
         builder.HasIndex(u => u.UserName).IsUnique(false);
-
 
         builder
             .HasIndex(u => new { u.UserName, u.IsDeleted })

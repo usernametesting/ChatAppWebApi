@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Services;
 using Application.Abstractions.Services.ExternalServices;
 using Application.Abstractions.Services.InternalServices;
-using Application.Abstractions.Token;
+using Application.DTOs.Tokens;
 using Infrastructure.Abstractions.Services.Token;
 using Infrastructure.Impementions.Helpers;
 using Infrastructure.Impementions.Services.ExternalServices;

@@ -36,7 +36,8 @@ public class UserService : IUserService
     {
         try
         {
-            await _unitOfWork.GetWriteRepository<AppUser, int>().DeleteById(Id);
+            var repo =  _unitOfWork.GetWriteRepository<AppUser, int>();
+            await repo.DeleteById(Id);
             await _unitOfWork.Commit();
             return new()
             {

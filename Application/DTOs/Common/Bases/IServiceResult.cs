@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Common.Bases;
 
-public class IServiceResult
+public interface IServiceResult
 {
     public bool Success { get; set; }
     public string? Message { get; set; }

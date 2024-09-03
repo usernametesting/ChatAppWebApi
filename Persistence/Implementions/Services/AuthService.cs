@@ -1,21 +1,32 @@
 ﻿using Application.Abstractions.HubServices;
 using Application.Abstractions.Services;
 using Application.Abstractions.Services.ExternalServices;
-using Application.Abstractions.Token;
 using Application.DTOs;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.Common;
+using Application.DTOs.Common.Bases;
 using Application.DTOs.ExternalServiceDTOs;
+using Application.DTOs.Tokens;
+using Application.UnitOfWorks;
+using Azure;
+using Azure.Core;
+using Domain.Entities.Identity;
 using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Persistence.DbContexts;
+using Persistence.IdentityCustoms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,8 +41,9 @@ public class AuthService : IAuthService
     private readonly ProductDbContext productDbContext;
     private readonly INotificationHubService _notifyService;
     private readonly ITokenHandler _tokenHandler;
-
-    public AuthService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService, IAutoMapperConfiguration mapper, ProductDbContext productDbContext, INotificationHubService notifyService, ITokenHandler tokenHandler)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IUnitOfWork _unitOfWork;
+    public AuthService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService, IAutoMapperConfiguration mapper, ProductDbContext productDbContext, INotificationHubService notifyService, ITokenHandler tokenHandler, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -40,15 +52,17 @@ public class AuthService : IAuthService
         this.productDbContext = productDbContext;
         _notifyService = notifyService;
         _tokenHandler = tokenHandler;
+        _httpContextAccessor = httpContextAccessor;
+        _unitOfWork = unitOfWork;
     }
 
 
 
-    public async Task<ServiceResult<Token>> LoginAsync(LoginUserDTO model)
+    public async Task<IServiceResult> LoginAsync(LoginUserDTO model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
-            return new ()
+            return new ServiceResult()
             {
                 StatusCode = HttpStatusCode.BadRequest,
                 Message = "user not found",
@@ -57,15 +71,9 @@ public class AuthService : IAuthService
 
         if (!user.EmailConfirmed)
         {
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            await sendEmailConfirmationMail(user);
 
-            await _mailService.SendMail(new SendMailDTO()
-            {
-                Email = user.Email,
-                CallBackUrl = $"http://localhost:5205/Account/ConfirmGmail?id={user.Id}&token={WebUtility.UrlEncode(token)}"
-            });
-
-            return new ()
+            return new ServiceResult()
             {
                 StatusCode = HttpStatusCode.FailedDependency,
                 Message = "account was unconfirmed,check your email to confirm account",
@@ -75,31 +83,89 @@ public class AuthService : IAuthService
         var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: false, lockoutOnFailure: false);
         if (!result.Succeeded)
         {
-            return new ()
+            return new ServiceResult()
             {
                 StatusCode = HttpStatusCode.Unauthorized,
                 Message = "Invalid password",
                 Success = false,
             };
         }
-        await _notifyService.SendNotification("AdminNotfications", $"{user.UserName} logged") ;
-        return new ()
+        await _notifyService.SendNotification("AdminNotfications", $"{user.UserName} logged");
+
+        var token = _tokenHandler.CreateAccessToken(user);
+        var refreshToken = (await _unitOfWork.GetReadRepository<AppUserToken, int>()
+              .GetAllAsQueryableAsync()).FirstOrDefault(token => token.UserId == user.Id);
+
+        if (refreshToken is null)
+            await _unitOfWork.GetWriteRepository<AppUserToken,int>().AddAsync(new AppUserToken()
+            {
+                CreatedDate = DateTime.UtcNow,
+                LoginProvider = "Default",
+                Expires = DateTime.UtcNow.AddDays(1),
+                Name = "RefreshToken",
+                Value = token.RefreshToken,
+                UserId = user.Id,
+            });
+        else
+        {
+            refreshToken.Value = token.RefreshToken;
+            refreshToken.Expires = DateTime.UtcNow.AddDays(1);
+        }
+        await _unitOfWork.Commit();
+        await CreateOrUpdateRefreshToken(user, token.RefreshToken);
+        return new ServiceResult<Token>()
         {
             StatusCode = HttpStatusCode.OK,
-            Message = "OK",
+            Message = "Login was succsessfully",
             Success = true,
-            resultObj = _tokenHandler.CreateAccessToken(3600,user),
+            resultObj = token
         };
 
 
     }
+
+    private async Task CreateOrUpdateRefreshToken(AppUser user,string token)
+    {
+        var refreshToken = (await _unitOfWork.GetReadRepository<AppUserToken,int>()
+                .GetAllAsQueryableAsync()).FirstOrDefault(token => token.UserId == user.Id);
+
+        if (refreshToken is null)
+            user?.UserTokens?.Add(new AppUserToken()
+            {
+                CreatedDate = DateTime.UtcNow,
+                LoginProvider = "Default",
+                Expires = DateTime.UtcNow.AddDays(1),
+                Name = "RefreshToken",
+                Value = token,
+                User = user
+            });
+        else
+        {
+            refreshToken.Value = token;
+            refreshToken.Expires = DateTime.UtcNow.AddDays(1);
+        }
+        await _unitOfWork.Commit();
+    }
+
+    private async Task sendEmailConfirmationMail(AppUser user)
+    {
+        var emailConfirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        await _mailService.SendMail(new SendMailDTO()
+        {
+            Email = user.Email,
+            CallBackUrl = $"http://localhost:5205/Account/ConfirmGmail?id={user.Id}&token={WebUtility.UrlEncode(emailConfirmToken)}"
+        });
+    }
+
+  
 
     public async Task<ServiceResult> RegisterAsync(CreateUserDTO model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
 
         if (user is not null)
-            return new ()
+            return new()
             {
                 StatusCode = HttpStatusCode.AlreadyReported,
                 Success = false,
@@ -121,8 +187,8 @@ public class AuthService : IAuthService
             });
 
             await _notifyService.SendNotification("AdminNotfications", $"{user.UserName} registered");
-            
-            return new ()
+
+            return new()
             {
                 Message = "user succsessfully created and check your email to confirm your account",
                 StatusCode = HttpStatusCode.Created,
@@ -130,7 +196,7 @@ public class AuthService : IAuthService
             };
         }
 
-        return new ()
+        return new()
         {
             Message = string.Join(", ", result.Errors.Select(e => e.Description)),
             StatusCode = HttpStatusCode.BadRequest,
@@ -142,22 +208,54 @@ public class AuthService : IAuthService
     public async Task<ServiceResult> ConfirmEmailAsync(int id, string token)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
-        var result = await _userManager.ConfirmEmailAsync(user, token);
+        var result = await _userManager.ConfirmEmailAsync(user, WebUtility.UrlDecode(token));
 
         if (result.Succeeded)
-            return new ()
+            return new()
             {
                 Message = "confirmation was successfully",
                 StatusCode = HttpStatusCode.OK,
                 Success = result.Succeeded,
             };
-        return new ()
+        return new()
         {
             Message = string.Join(",", result.Errors.Select(e => e.Description)),
             StatusCode = HttpStatusCode.BadRequest,
             Success = result.Succeeded,
         };
     }
+    [Authorize]
 
-  
+    public async Task<IServiceResult> RefrehTokenAsync(RefreshTokenDTO refreshToken)
+    {
+        var user = await (await _unitOfWork.GetReadRepository<AppUser, int>().GetAllAsQueryableAsync())
+                                        .FirstOrDefaultAsync(u=>u.UserTokens!.Any(t=>t.Value==refreshToken.RefreshToken));
+        
+        var token = user?.UserTokens?.FirstOrDefault(t => t.Value == refreshToken.RefreshToken);
+        if (token is null)
+            return new ServiceResult()
+            {
+                StatusCode = HttpStatusCode.Unauthorized,
+                Message = "Refresh token not found",
+                Success = false
+            };
+        if (token.Expires < DateTime.UtcNow)
+            return new ServiceResult()
+            {
+                StatusCode = HttpStatusCode.NotAcceptable,
+                Message = "Refresh token expired",
+                Success = false
+            };
+
+        var newToken = _tokenHandler.CreateAccessToken(user!);
+        await CreateOrUpdateRefreshToken(user,newToken.RefreshToken);
+        return new ServiceResult<Token>()
+        {
+            Message = "user token updated",
+            StatusCode = HttpStatusCode.OK,
+            Success = true,
+            resultObj = newToken
+        };
+       
+    }
 }

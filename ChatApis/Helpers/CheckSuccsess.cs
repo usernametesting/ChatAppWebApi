@@ -10,6 +10,8 @@ public class HttpResult : ControllerBase
 {
     public async Task<IActionResult> Result(IServiceResult result)
     {
+     
+       
         switch (result.StatusCode)
         {
             case HttpStatusCode.OK:

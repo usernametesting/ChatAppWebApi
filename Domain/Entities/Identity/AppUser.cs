@@ -3,6 +3,7 @@ using Domain.Entities.Commons;
 using Domain.Entities.ConcretEntities;
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using System.Runtime.CompilerServices;
 
 namespace ETicaretAPI.Domain.Entities.Identity
 {
@@ -20,9 +21,12 @@ namespace ETicaretAPI.Domain.Entities.Identity
 
         public virtual ICollection<Message>? FromMessages { get; set; }
         public virtual ICollection<Message>? ToMessages { get; set; }
+        public virtual ICollection<AppUserToken>? UserTokens { get; set; }
+
         public AppUser()
         {
             UserRoles = new HashSet<AppUserRole>();
+            //SecurityStamp = Guid.NewGuid().ToString();
         }
     }
 }

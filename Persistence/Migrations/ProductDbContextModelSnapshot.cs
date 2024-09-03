@@ -76,6 +76,44 @@ namespace Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.Entities.Identity.AppUserToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "LoginProvider", "Name")
+                        .IsUnique()
+                        .HasFilter("[LoginProvider] IS NOT NULL AND [Name] IS NOT NULL");
+
+                    b.ToTable("UserTokens", (string)null);
+                });
+
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Identity.AppRole", b =>
                 {
                     b.Property<int>("Id")
@@ -233,7 +271,7 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "86f6e50f-25ac-40d3-8e1a-a360087f11de",
+                            ConcurrencyStamp = "6eb7d94d-6430-4fbc-8bfb-2a4b6e16969d",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@example.com",
                             EmailConfirmed = true,
@@ -242,9 +280,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM003kHsGXLsqPU1qvQicpzn8Sk8vxIAywU+tclAkn9w9rOWDjRutwoWxTC7Nm9uCw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKBcYMRcdP0ph6Z31jmZsOts9WjDkvTfmSV0/Q+6OTsXeY/4McJzZnWIQFj5mP0WTw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b015d914-665e-4d50-95ef-9c88fd5565b1",
+                            SecurityStamp = "3fe49ba8-043b-48e5-a3fa-f3565db4264b",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -319,25 +357,6 @@ namespace Persistence.Migrations
                     b.ToTable("UserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId", "LoginProvider", "Name");
-
-                    b.ToTable("UserTokens", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.ConcretEntities.Message", b =>
                 {
                     b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "FromUser")
@@ -376,6 +395,17 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Identity.AppUserToken", b =>
+                {
+                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "User")
+                        .WithMany("UserTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppRole", null)
@@ -403,15 +433,6 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
-                {
-                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Identity.AppRole", b =>
                 {
                     b.Navigation("UserRoles");
@@ -424,6 +445,8 @@ namespace Persistence.Migrations
                     b.Navigation("ToMessages");
 
                     b.Navigation("UserRoles");
+
+                    b.Navigation("UserTokens");
                 });
 #pragma warning restore 612, 618
         }

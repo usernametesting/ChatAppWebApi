@@ -44,7 +44,7 @@ public class RoleService : IRoleService
     {
         var role = await _roleManager.FindByIdAsync(Id.ToString());
         var result = await _roleManager.DeleteAsync(role!);
-        if (result.Succeeded)
+        if (!result.Succeeded)
             return new()
             {
                 Success = result.Succeeded,
@@ -58,17 +58,18 @@ public class RoleService : IRoleService
             StatusCode = HttpStatusCode.OK,
         };
     }
-    public async Task<ServiceResult<List<AppRole>>> GetAllAsync()
+    public async Task<ServiceResult<List<ReturnRoleDTO>>> GetAllAsync()
     {
         try
         {
             var roles = await _unitOfWork.GetReadRepository<AppRole, int>().GetAllAsync();
+            var mappedRoles = _mapper.Map<ReturnRoleDTO,AppRole>(roles.ToList());
             return new()
             {
                 Message = "request was succsess",
                 StatusCode = HttpStatusCode.OK,
                 Success = true,
-                resultObj = roles.ToList()
+                resultObj = mappedRoles
             };
         }
         catch (Exception e)

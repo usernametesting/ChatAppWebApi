@@ -18,7 +18,7 @@ namespace Persistence.DbContexts;
 //public class ProductDbContext : DbContext
 public class ProductDbContext : IdentityDbContext<AppUser, AppRole, int,
     IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
-    IdentityRoleClaim<int>, IdentityUserToken<int>>
+    IdentityRoleClaim<int>, AppUserToken>
 {
     public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options)
     {
@@ -60,6 +60,7 @@ public class ProductDbContext : IdentityDbContext<AppUser, AppRole, int,
         builder.Entity<AppUser>().HasQueryFilter(u => !u.IsDeleted);
 
         base.OnModelCreating(builder);
+
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
 

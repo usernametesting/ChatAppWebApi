@@ -20,32 +20,27 @@ public class UserController : ControllerBase
         _httpResult = checker;
     }
 
-
+    [HttpGet("GetAll")]
     public async Task<IActionResult> GetAll()
     {
         var result = (await _userService.GetAllAsync());
         return await _httpResult.Result(result);
     }
-
+    [HttpDelete("Delete")]
     public async Task<IActionResult> Delete(int Id)
     {
         var result = await _userService.Delete(Id);
-        return await _httpResult.Result(await _userService.Delete(Id));
-    }
-
-    public async Task<IActionResult> Edit(int Id)
-    {
-        var result = await _userService.GetByIdAsync(Id);
         return await _httpResult.Result(result);
     }
-    [HttpPost]
+  
+    [HttpPost("Edit")]
     public async Task<IActionResult> Edit(UpdateUserDTO model)
     {
         var result = await _userService.Update(model);
         return await _httpResult.Result(result);
     }
 
-    [HttpGet]
+    [HttpGet("Recover")]
     public async Task<IActionResult> Recover(int Id)
     {
         var result = await _userService.Recover(Id);

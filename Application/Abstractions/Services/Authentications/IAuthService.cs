@@ -2,6 +2,8 @@
 using Application.DTOs;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.Common;
+using Application.DTOs.Common.Bases;
+using Application.DTOs.Tokens;
 using ETicaretAPI.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,8 @@ namespace Application.Abstractions.Services;
 
 public interface IAuthService : IExternalAuthService, IInternalAuthService
 {
-    Task<ServiceResult<Application.DTOs.Token>> LoginAsync(LoginUserDTO model);
+    Task<IServiceResult> LoginAsync(LoginUserDTO model);
+    Task<IServiceResult> RefrehTokenAsync(RefreshTokenDTO refreshToken);
     Task<ServiceResult> RegisterAsync(CreateUserDTO model);
 
     Task<ServiceResult> ConfirmEmailAsync(int id,string token);

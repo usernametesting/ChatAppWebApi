@@ -10,8 +10,8 @@ public class Message : BaseEntity<int>, ISoftDelete
     public bool IsDeleted { get; set; }
 
     public int FromUserId { get; set; }
-    public AppUser FromUser { get; set; }
+    public virtual AppUser FromUser { get; set; }
     public int ToUserId { get; set; }
-    public AppUser ToUser { get; set; }
+    public virtual AppUser ToUser { get; set; }
 
 }

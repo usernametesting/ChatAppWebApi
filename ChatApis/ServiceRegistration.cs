@@ -4,6 +4,7 @@ using CompositionRoot;
 using ETicaretAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Persistence.DbContexts;
+using Persistence.IdentityCustoms;
 
 
 namespace ProductMVC;
@@ -12,10 +13,12 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddPresentationService(this IServiceCollection services,IConfiguration configuration)
     {
+        //services.AddScoped<UserManager<,>,CustomUserManager<,>>();
         services.AddScoped<HttpResult>();
         services.AddApplicationDependencies(configuration);
         services.AddHttpContextAccessor();
         services.AddSignalR();
+        services.AddHttpContextAccessor();
         return services;
     }
 }

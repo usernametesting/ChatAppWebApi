@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Abstractions.Token;
+namespace Application.DTOs.Tokens;
 
 public interface ITokenHandler
 {
-    DTOs.Token CreateAccessToken(int second, AppUser appUser);
+    Token CreateAccessToken(AppUser appUser, int second = 3600);
     string CreateRefreshToken();
+
 }

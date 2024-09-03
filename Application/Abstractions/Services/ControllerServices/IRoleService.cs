@@ -11,7 +11,7 @@ namespace Application.Abstractions.Services.ControllerServices;
 
 public interface IRoleService
 {
-    Task<ServiceResult<List<AppRole>>> GetAllAsync();
+    Task<ServiceResult<List<ReturnRoleDTO>>> GetAllAsync();
     Task<ServiceResult<AppRole>> GetByIdAsync(int id);
 
     Task<ServiceResult> Delete(int Id);

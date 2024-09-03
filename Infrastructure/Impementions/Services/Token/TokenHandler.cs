@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Token;
+﻿using Application.DTOs.Tokens;
 using Domain.Entities;
 using ETicaretAPI.Domain.Entities.Identity;
 using Microsoft.Extensions.Configuration;
@@ -17,13 +17,13 @@ namespace Infrastructure.Abstractions.Services.Token;
 public class TokenHandler : ITokenHandler
 {
     readonly IConfiguration _configuration;
-
+    
     public TokenHandler(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    public Application.DTOs.Token CreateAccessToken(int second, AppUser user)
+    public Application.DTOs.Token CreateAccessToken(AppUser user, int second=1500000000)
     {
         Application.DTOs.Token token = new();
 
@@ -31,7 +31,8 @@ public class TokenHandler : ITokenHandler
 
         SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-        token.Expiration = DateTime.UtcNow.AddSeconds(second);
+        token.Expiration = DateTime.Now.AddMinutes(1);
+
         JwtSecurityToken securityToken = new(
             //audience: _configuration["Token:Audience"],
             //issuer: _configuration["Token:Issuer"],
@@ -56,4 +57,6 @@ public class TokenHandler : ITokenHandler
         random.GetBytes(number);
         return Convert.ToBase64String(number);
     }
+
+   
 }

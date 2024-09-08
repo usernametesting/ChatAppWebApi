@@ -31,15 +31,14 @@ public class TokenHandler : ITokenHandler
 
         SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-        token.Expiration = DateTime.Now.AddMinutes(1);
+        token.Expiration = DateTime.Now.AddDays(1);
 
         JwtSecurityToken securityToken = new(
-            //audience: _configuration["Token:Audience"],
-            //issuer: _configuration["Token:Issuer"],
+            audience: _configuration["Token:Audience"],
+            issuer: _configuration["Token:Issuer"],
             expires: token.Expiration,
-            notBefore: DateTime.UtcNow,
             signingCredentials: signingCredentials,
-            claims: new List<Claim> { new(ClaimTypes.Name, user.UserName) }
+            claims: new List<Claim> { new(ClaimTypes.Name, user.UserName),new(ClaimTypes.NameIdentifier,user.Id.ToString())}
             );
 
         token.AccessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);

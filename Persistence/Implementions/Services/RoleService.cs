@@ -5,6 +5,7 @@ using Application.DTOs.Common;
 using Application.DTOs.RoleDTOs;
 using Application.UnitOfWorks;
 using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 
@@ -16,14 +17,16 @@ public class RoleService : IRoleService
     private readonly IDeepCopy _deepCopy;
     private readonly IAutoMapperConfiguration _mapper;
     private readonly RoleManager<AppRole> _roleManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-    public RoleService(IUnitOfWork unitOfWork, IDeepCopy deepCopy, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager)
+    public RoleService(IUnitOfWork unitOfWork, IDeepCopy deepCopy, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, IHttpContextAccessor httpContextAccessor)
     {
         _unitOfWork = unitOfWork;
         _deepCopy = deepCopy;
         _mapper = mapper;
         _roleManager = roleManager;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ServiceResult> Add(AddRoleDTO model)
@@ -60,6 +63,9 @@ public class RoleService : IRoleService
     }
     public async Task<ServiceResult<List<ReturnRoleDTO>>> GetAllAsync()
     {
+        var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+
+        var fo = _httpContextAccessor.HttpContext;
         try
         {
             var roles = await _unitOfWork.GetReadRepository<AppRole, int>().GetAllAsync();

@@ -77,6 +77,7 @@ public class ProductDbContext : IdentityDbContext<AppUser, AppRole, int,
     private bool ShouldBeFilter(IMutableEntityType entity) =>
         typeof(ISoftDelete).IsAssignableFrom(entity.ClrType);
 
+    public virtual DbSet<UsersMessages> UsersMessages { get; set; }
     public virtual DbSet<Message> Messages { get; set; }
 
 

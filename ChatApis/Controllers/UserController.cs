@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Services.ControllerServices;
 using Application.DTOs.AuthDTOs;
 using ChatApis.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,8 @@ namespace ChatApis.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
+
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -24,6 +27,19 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = (await _userService.GetAllAsync());
+        return await _httpResult.Result(result);
+    }
+    [HttpGet("GetCurrentlyUser")]
+    public async Task<IActionResult> GetCurrentlyUser()
+    {
+        var result = (await _userService.GetCurrentlyUserAsync());
+        return await _httpResult.Result(result);
+    }
+
+    [HttpGet("GetUserWithMessages")]
+    public async Task<IActionResult> GetUserWithMessages()
+    {
+        var result = await _userService.GetUsersWithMessagesAsync();
         return await _httpResult.Result(result);
     }
     [HttpDelete("Delete")]

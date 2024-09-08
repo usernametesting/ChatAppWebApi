@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Persistence.DbContexts;
 using Persistence.IdentityCustoms;
 using ProductMVC;
+using SignalR.Hubs;
 using System.Text;
 
 namespace ChatApis
@@ -36,13 +37,14 @@ namespace ChatApis
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigins",
+                options.AddPolicy("AllowOrigin",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:5173")
-                               .AllowAnyHeader()
-                               .AllowAnyMethod()
-                               .AllowCredentials(); 
+                        builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5173")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
                     });
             });
             var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);
@@ -75,11 +77,11 @@ namespace ChatApis
             //    app.UseSwaggerUI();
 
             //}
-            app.UseCors("AllowSpecificOrigins");
+            app.UseCors("AllowOrigin");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            app.MapHub<ChatHub>("/chatHub");
             app.MapControllers();
 
             app.Run();

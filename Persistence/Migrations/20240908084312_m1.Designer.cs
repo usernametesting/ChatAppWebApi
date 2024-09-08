@@ -12,7 +12,7 @@ using Persistence.DbContexts;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20240831111534_m1")]
+    [Migration("20240908084312_m1")]
     partial class m1
     {
         /// <inheritdoc />
@@ -36,13 +36,53 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserMessagesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isSender")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserMessagesId")
+                        .IsUnique();
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ConcretEntities.UsersMessages", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("FromUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ToUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToUserId1")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
@@ -54,7 +94,9 @@ namespace Persistence.Migrations
 
                     b.HasIndex("ToUserId");
 
-                    b.ToTable("Messages");
+                    b.HasIndex("ToUserId1");
+
+                    b.ToTable("UsersMessages");
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.AppUserRole", b =>
@@ -181,6 +223,9 @@ namespace Persistence.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -274,7 +319,7 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6eb7d94d-6430-4fbc-8bfb-2a4b6e16969d",
+                            ConcurrencyStamp = "e04f8a91-83d1-443a-92d5-4f5740d91600",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@example.com",
                             EmailConfirmed = true,
@@ -283,9 +328,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKBcYMRcdP0ph6Z31jmZsOts9WjDkvTfmSV0/Q+6OTsXeY/4McJzZnWIQFj5mP0WTw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFFkDKSf28h3CYYs3OdtjJxxlT809/v2Tx5v8FyoBqy9B7tbEWKVEXjds7LGTZEHEA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3fe49ba8-043b-48e5-a3fa-f3565db4264b",
+                            SecurityStamp = "eda56185-f864-41a8-a5dc-84f1921e20dc",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -362,16 +407,33 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.ConcretEntities.Message", b =>
                 {
+                    b.HasOne("Domain.Entities.ConcretEntities.UsersMessages", "UserMessages")
+                        .WithOne("Message")
+                        .HasForeignKey("Domain.Entities.ConcretEntities.Message", "UserMessagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserMessages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ConcretEntities.UsersMessages", b =>
+                {
                     b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "FromUser")
-                        .WithMany("FromMessages")
+                        .WithMany("Messages")
                         .HasForeignKey("FromUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "ToUser")
-                        .WithMany("ToMessages")
+                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", null)
+                        .WithMany()
                         .HasForeignKey("ToUserId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "ToUser")
+                        .WithMany()
+                        .HasForeignKey("ToUserId1")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FromUser");
@@ -436,6 +498,12 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.ConcretEntities.UsersMessages", b =>
+                {
+                    b.Navigation("Message")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Identity.AppRole", b =>
                 {
                     b.Navigation("UserRoles");
@@ -443,9 +511,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("FromMessages");
-
-                    b.Navigation("ToMessages");
+                    b.Navigation("Messages");
 
                     b.Navigation("UserRoles");
 

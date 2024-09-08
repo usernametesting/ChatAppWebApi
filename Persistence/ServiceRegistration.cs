@@ -3,6 +3,8 @@ using Application.Abstractions.Services.Authentications;
 using Application.Abstractions.Services.ControllerServices;
 using Application.Abstractions.Services.InternalServices;
 using Application.Repositories.Commons;
+using Application.Repositories.Products;
+using Application.Repositories.Users;
 using Application.UnitOfWorks;
 using ETicaretAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Persistence.DbContexts;
 using Persistence.IdentityCustoms;
 using Persistence.Implementions.Services;
+using Persistence.Repositories.Concrets.Messages;
+using Persistence.Repositories.Concrets.Users;
 using Persistence.UnitOfWorks;
 using System;
 
@@ -38,6 +42,7 @@ public static class ServiceRegistration
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IUserReadrepository<AppUser, int>, UserReadRepository>();
 
 
         services.Configure<IdentityOptions>(options =>

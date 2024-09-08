@@ -3,17 +3,25 @@ using Application.Abstractions.Services.ControllerServices;
 using Application.Abstractions.Services.InternalServices;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.Common;
+using Application.DTOs.SignalRDTOs;
+using Application.DTOs.UsersDTOs;
+using Application.Repositories.Products;
+using Application.Repositories.Users;
 using Application.UnitOfWorks;
+using Domain.Entities.ConcretEntities;
 using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Repositories.Concrets.Users;
 using System.Collections;
 using System.Data;
 using System.Net;
+using System.Security.Claims;
 
 
 namespace Persistence.Implementions.Services;
-
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -21,22 +29,26 @@ public class UserService : IUserService
     private readonly IAutoMapperConfiguration _mapper;
     private readonly RoleManager<AppRole> _roleManager;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IUserReadrepository<AppUser, int> userRepo;
 
 
-    public UserService(IUnitOfWork unitOfWork, IDeepCopy deepCopy, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager)
+    public UserService(IUnitOfWork unitOfWork, IDeepCopy deepCopy, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor, IUserReadrepository<AppUser,int> userRepo)
     {
         _unitOfWork = unitOfWork;
         _deepCopy = deepCopy;
         _mapper = mapper;
         _roleManager = roleManager;
         _userManager = userManager;
+        _httpContextAccessor = httpContextAccessor;
+        this.userRepo = userRepo;
     }
 
     public async Task<ServiceResult> Delete(int Id)
     {
         try
         {
-            var repo =  _unitOfWork.GetWriteRepository<AppUser, int>();
+            var repo = _unitOfWork.GetWriteRepository<AppUser, int>();
             await repo.DeleteById(Id);
             await _unitOfWork.Commit();
             return new()
@@ -123,6 +135,25 @@ public class UserService : IUserService
                 StatusCode = HttpStatusCode.BadRequest,
             };
         }
+    }
+
+    public Task<ServiceResult<UserWithMessages>> GetCurrentlyUserAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ServiceResult<List<UserWithMessages>>> GetUsersWithMessagesAsync()
+    {
+        var senderId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var messages = await userRepo.GetUsersWithMessages(int.Parse(senderId!));
+
+        return new ServiceResult<List<UserWithMessages>>
+        {
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK,
+            resultObj = messages
+        };
     }
 
     public async Task<ServiceResult> Recover(int Id)

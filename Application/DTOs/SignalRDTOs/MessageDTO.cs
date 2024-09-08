@@ -1,0 +1,12 @@
+﻿using Domain.Enums.MessageEnums;
+
+namespace Application.DTOs.SignalRDTOs;
+
+public class MessageDTO
+{
+    public string? Message { get; set; }
+    public MessageType MessageType { get; set; }
+    public bool IsSender { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public int? toUserId { get; set; }
+}

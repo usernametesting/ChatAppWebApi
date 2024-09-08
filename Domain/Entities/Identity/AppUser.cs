@@ -13,14 +13,14 @@ namespace ETicaretAPI.Domain.Entities.Identity
         public DateTime? RefreshTokenEndDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public string? ConnectionId { get; set; }
 
         public bool IsOnline { get; set; }
 
         public virtual ICollection<AppUserRole>? UserRoles { get; set; }
         public bool IsDeleted { get; set; }
 
-        public virtual ICollection<Message>? FromMessages { get; set; }
-        public virtual ICollection<Message>? ToMessages { get; set; }
+        public virtual ICollection<UsersMessages>? Messages { get; set; }
         public virtual ICollection<AppUserToken>? UserTokens { get; set; }
 
         public AppUser()

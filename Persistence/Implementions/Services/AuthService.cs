@@ -8,27 +8,16 @@ using Application.DTOs.Common.Bases;
 using Application.DTOs.ExternalServiceDTOs;
 using Application.DTOs.Tokens;
 using Application.UnitOfWorks;
-using Azure;
-using Azure.Core;
 using Domain.Entities.Identity;
 using ETicaretAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
+
 using Persistence.DbContexts;
-using Persistence.IdentityCustoms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Net;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Implementions.Services;
 
@@ -60,6 +49,7 @@ public class AuthService : IAuthService
 
     public async Task<IServiceResult> LoginAsync(LoginUserDTO model)
     {
+        var f = _httpContextAccessor.HttpContext;
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
             return new ServiceResult()

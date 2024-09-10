@@ -23,6 +23,7 @@ public class UserReadRepository : GenericReadRepository<AppUser, int>, IUserRead
     public async Task<List<UserWithMessages>> GetUsersWithMessages(int senderId)
     {
         var userWithMessages = await _entity
+       .Where(user=>user.Id!=senderId)
       .Select(u => new
       {
           User = new UserWithMessages
@@ -30,7 +31,7 @@ public class UserReadRepository : GenericReadRepository<AppUser, int>, IUserRead
               Id = u.Id,
               UserName = u.UserName,
               Messages = _context.UsersMessages
-                  .Where(um => um.FromUserId == u.Id || um.ToUserId == u.Id)
+                  .Where(um => (um.FromUserId == u.Id && um.ToUserId==senderId)||( um.ToUserId == u.Id && um.FromUserId==senderId))
                   .Select(um => new MessageDTO
                   {
                       Message = um.Message.Content,

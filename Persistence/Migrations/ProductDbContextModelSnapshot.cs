@@ -30,6 +30,9 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -41,9 +44,6 @@ namespace Persistence.Migrations
 
                     b.Property<int>("UserMessagesId")
                         .HasColumnType("int");
-
-                    b.Property<string>("content")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("isSender")
                         .HasColumnType("bit");
@@ -311,20 +311,58 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c8a7a8aa-dad4-4522-919a-043ccd025ca5",
+                            ConcurrencyStamp = "2f801035-57c8-494d-a315-bd53691d0780",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@example.com",
+                            Email = "user1",
                             EmailConfirmed = true,
                             IsDeleted = false,
                             IsOnline = false,
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                            NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOdyWJxvBe2sUxlU2ur3AbW0ZkLCeT6HuFS8OWDz0P+ZtFvUILFB56oqOngrRIshfQ==",
+                            NormalizedEmail = "USER1",
+                            NormalizedUserName = "USER1",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFaEFkNsnuH6eIG6j4UMTOOdZQO06midM7EQ9upODWpdI65aIiC8hZxErp86itbabQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "735c62f3-5607-4cc2-8925-4828d020a909",
+                            SecurityStamp = "42153ba3-94fb-4684-9598-4b887a3cd99f",
                             TwoFactorEnabled = false,
-                            UserName = "admin"
+                            UserName = "user1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "fd3c9d81-83ab-4a9b-88a0-950720fac1a1",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "user2",
+                            EmailConfirmed = true,
+                            IsDeleted = false,
+                            IsOnline = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER2",
+                            NormalizedUserName = "USER2",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA0OJhL5/bqAvMQJtnx+VWyOoAYMmsCviiopD0NN0BQ7v9xNn/uhi50/kj4uuRcbIA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "1b0f5deb-8ef3-411f-8f2c-c72738af8e7c",
+                            TwoFactorEnabled = false,
+                            UserName = "user2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a7482a75-7192-42ff-befe-9bac88a1be79",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "user3",
+                            EmailConfirmed = true,
+                            IsDeleted = false,
+                            IsOnline = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER3",
+                            NormalizedUserName = "USER3",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK9QrCw5zLelHKXnZdhK3JjTC2ly8gIwreZvaKrtfaiGeiuiw8XFE8YlRqiv5KVrLA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "2582cd7c-ea5f-43ff-b0c1-3d1565105cac",
+                            TwoFactorEnabled = false,
+                            UserName = "user3"
                         });
                 });
 

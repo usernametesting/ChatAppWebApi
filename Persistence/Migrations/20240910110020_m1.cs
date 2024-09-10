@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
@@ -133,7 +135,6 @@ namespace Persistence.Migrations
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     FromUserId = table.Column<int>(type: "int", nullable: false),
                     ToUserId = table.Column<int>(type: "int", nullable: false),
-                    ToUserId1 = table.Column<int>(type: "int", nullable: false),
                     MessageId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -153,12 +154,6 @@ namespace Persistence.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UsersMessages_Users_ToUserId1",
-                        column: x => x.ToUserId1,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,7 +211,7 @@ namespace Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MessageType = table.Column<int>(type: "int", nullable: false),
                     UserMessagesId = table.Column<int>(type: "int", nullable: false),
                     isSender = table.Column<bool>(type: "bit", nullable: false),
@@ -242,7 +237,12 @@ namespace Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
-                values: new object[] { 1, 0, "e04f8a91-83d1-443a-92d5-4f5740d91600", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@example.com", true, false, false, false, null, "ADMIN@EXAMPLE.COM", "ADMIN", "AQAAAAIAAYagAAAAEFFkDKSf28h3CYYs3OdtjJxxlT809/v2Tx5v8FyoBqy9B7tbEWKVEXjds7LGTZEHEA==", null, false, null, null, "eda56185-f864-41a8-a5dc-84f1921e20dc", false, null, "admin" });
+                values: new object[,]
+                {
+                    { 1, 0, "2f801035-57c8-494d-a315-bd53691d0780", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, false, null, "USER1", "USER1", "AQAAAAIAAYagAAAAEFaEFkNsnuH6eIG6j4UMTOOdZQO06midM7EQ9upODWpdI65aIiC8hZxErp86itbabQ==", null, false, null, null, "42153ba3-94fb-4684-9598-4b887a3cd99f", false, null, "user1" },
+                    { 2, 0, "fd3c9d81-83ab-4a9b-88a0-950720fac1a1", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, false, null, "USER2", "USER2", "AQAAAAIAAYagAAAAEA0OJhL5/bqAvMQJtnx+VWyOoAYMmsCviiopD0NN0BQ7v9xNn/uhi50/kj4uuRcbIA==", null, false, null, null, "1b0f5deb-8ef3-411f-8f2c-c72738af8e7c", false, null, "user2" },
+                    { 3, 0, "a7482a75-7192-42ff-befe-9bac88a1be79", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, false, null, "USER3", "USER3", "AQAAAAIAAYagAAAAEK9QrCw5zLelHKXnZdhK3JjTC2ly8gIwreZvaKrtfaiGeiuiw8XFE8YlRqiv5KVrLA==", null, false, null, null, "2582cd7c-ea5f-43ff-b0c1-3d1565105cac", false, null, "user3" }
+                });
 
             migrationBuilder.InsertData(
                 table: "UsersRoles",
@@ -334,11 +334,6 @@ namespace Persistence.Migrations
                 name: "IX_UsersMessages_ToUserId",
                 table: "UsersMessages",
                 column: "ToUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsersMessages_ToUserId1",
-                table: "UsersMessages",
-                column: "ToUserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UsersRoles_RoleId",

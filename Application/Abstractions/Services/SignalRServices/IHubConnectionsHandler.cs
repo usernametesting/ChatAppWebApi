@@ -6,7 +6,7 @@ namespace Application.Abstractions.Services.SignalRServices;
 
 public interface IHubConnectionsHandler
 {
-    Task OnConnected();  
+    Task OnConnected(string connectionId);  
     Task OnDisconnected();  
     Task SendMessage(MessageDTO model);  
 }

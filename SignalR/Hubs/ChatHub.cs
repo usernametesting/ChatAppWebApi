@@ -24,7 +24,7 @@ public class ChatHub : Hub, IChatHub
 
     public override async Task OnConnectedAsync()
     {
-        await _handler.OnConnected();
+        await _handler.OnConnected(Context.ConnectionId);
         await base.OnConnectedAsync();
     }
 

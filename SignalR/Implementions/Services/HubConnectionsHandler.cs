@@ -25,10 +25,10 @@ public class HubConnectionsHandler : IHubConnectionsHandler
         this.hub = hub;
     }
 
-    public async Task OnConnected()
+    public async Task OnConnected(string connectionId)
     {
         var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(GetUserIdByToken());
-        user.ConnectionId = _contextAccessor.HttpContext.Connection.Id;
+        user.ConnectionId = connectionId;
         user.IsOnline = true;
         await _unitOfWork.Commit();
         await SendAll("UserConnected", user.Id.ToString());
@@ -71,9 +71,14 @@ public class HubConnectionsHandler : IHubConnectionsHandler
                 MessageType = model.MessageType
             }
         });
+
+        var toUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync((int)model.toUserId);
+        model.toUserId = GetUserIdByToken();
+        model.IsSender = !model.IsSender;
+        await hub.Clients.Client(toUser.ConnectionId).SendAsync("ReceivedMessage", model);
         await _unitOfWork.Commit();
     }
 
-    
+
 }
 

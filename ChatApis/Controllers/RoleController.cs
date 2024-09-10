@@ -22,6 +22,7 @@ public class RoleController : ControllerBase
         _httpResult = checker;
     }
     [HttpGet("GetAll")]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         var result = await _roleService.GetAllAsync();

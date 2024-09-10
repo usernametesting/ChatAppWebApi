@@ -56,24 +56,28 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
 
 
         //seed datas
-        var adminUser = new AppUser
-        {
-            Id = 1,
-            UserName = "admin",
-            NormalizedUserName = "ADMIN",
-            Email = "admin@example.com",
-            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-            EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
-            LockoutEnabled = false,
-            AccessFailedCount = 0,
-        };
-
         var hasher = new PasswordHasher<AppUser>();
-        adminUser.PasswordHash = hasher.HashPassword(adminUser, "AdminPassword123!");
-
-        builder.HasData(adminUser);
+        var users = new List<AppUser>();
+        for (int i = 1; i < 4; i++)
+        {
+            var user = new AppUser
+            {
+                Id = i,
+                UserName = "user" + i,
+                NormalizedUserName = "USER" + i,
+                Email = "user"+i,
+                NormalizedEmail = "USER" + i,
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                LockoutEnabled = false,
+                AccessFailedCount = 0,
+            };
+            user.PasswordHash = hasher.HashPassword(user, "user"+i);
+            users.Add(user);
+        }
+       
+        builder.HasData(users);
 
     }
 }

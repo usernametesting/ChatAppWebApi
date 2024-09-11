@@ -16,7 +16,7 @@ namespace ETicaretAPI.Domain.Entities.Identity
         public string? ConnectionId { get; set; }
 
         public bool IsOnline { get; set; }
-        public DateTime? LastActivityDate { get; set; }
+        public string? LastActivityDate { get; set; }
 
         public virtual ICollection<AppUserRole>? UserRoles { get; set; }
         public bool IsDeleted { get; set; }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m : Migration
+    public partial class m1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,7 +43,7 @@ namespace Persistence.Migrations
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ConnectionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsOnline = table.Column<bool>(type: "bit", nullable: false),
-                    LastActivityDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastActivityDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -240,9 +240,9 @@ namespace Persistence.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "3c17c191-2b82-4909-b49f-f37112f779e4", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", "AQAAAAIAAYagAAAAELw5hdRq694bajAoOHclyd19baSwmHc1Nk+okXZ6sjceRNJohGpIRXA4u//TyfZ0xA==", null, false, null, null, "73396cdf-1d8e-45f4-8478-f6203597aabe", false, null, "user1" },
-                    { 2, 0, "78c11110-8c0b-4521-b512-b78e11475d57", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", "AQAAAAIAAYagAAAAEImSQ7tau9J4D8HMsf6KfSrwvwnkRtfGhiXaWAgS0B6bN0CDrRnrSQvsrvkvQcNqXQ==", null, false, null, null, "3f8ce59f-dbef-4d3f-abc4-7e886c7a1e41", false, null, "user2" },
-                    { 3, 0, "cd05560b-012c-4533-8497-d381d0f11a85", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", "AQAAAAIAAYagAAAAEGvcOcWcNmuf2ZuMUNeNNamBWUu2r3kihcT9y3OhZsz88iXy3+q3iO1i3zXA5zipyg==", null, false, null, null, "82eb1f1d-60ef-4275-a00f-564ebb4e1167", false, null, "user3" }
+                    { 1, 0, "aa59d2e6-89f4-4636-9da1-cd4712fa6338", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", "AQAAAAIAAYagAAAAEInq10hPO0lpsa5X94xWIuc0k/9RykibQuQQJO7snlA37f7bMqIZthKYEbpr9eF0ng==", null, false, null, null, "c12620ce-b7aa-4770-8859-77effdad1849", false, null, "user1" },
+                    { 2, 0, "c06b1be7-e953-48f5-980c-8383cc023275", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", "AQAAAAIAAYagAAAAEH21Z5SriHIrGuBJ8yMGGl+7ymtBcBosHBalC3yVmjeL56YPjcaOZkOJ5OxSoa7y7A==", null, false, null, null, "78b2197e-be62-48e2-bd4e-6e79cf84fb1f", false, null, "user2" },
+                    { 3, 0, "f0c871fd-9cfe-4754-acf5-fbb53e65729a", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", "AQAAAAIAAYagAAAAELHvWjfaEiPrN7IJm9Rt00DLGilBzxfvI+e2S83+N2zGbBl88bI0gANQd9/0c1lx7g==", null, false, null, null, "37b5afd1-f235-42dd-b3ec-befeaf86f790", false, null, "user3" }
                 });
 
             migrationBuilder.InsertData(

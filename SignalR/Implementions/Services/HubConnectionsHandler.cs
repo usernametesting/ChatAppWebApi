@@ -41,7 +41,8 @@ public class HubConnectionsHandler : IHubConnectionsHandler
         var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(GetUserIdByToken());
         user.ConnectionId = null;
         user.IsOnline = false;
-        user.LastActivityDate = DateTime.UtcNow;
+
+        user.LastActivityDate = DateTime.UtcNow.ToString("HH:mm:ss");
         await _unitOfWork.Commit();
         await SendAll("UserDisconnected", user.Id.ToString());
     }

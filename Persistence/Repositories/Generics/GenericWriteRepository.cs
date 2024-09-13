@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -81,5 +82,21 @@ public class GenericWriteRepositor<TEntity, TKey> : GenericRepository<TEntity, T
 
     }
 
+    public async Task UpdateMultipleAsync(Dictionary<string, object> updateValues, Expression<Func<TEntity, bool>> filter)
+    {
+        var entities = await _entity.Where(filter).ToListAsync();
+
+        foreach (var entity in entities)
+        {
+            foreach (var keyValue in updateValues)
+            {
+                var propertyInfo = entity.GetType().GetProperty(keyValue.Key);
+                if (propertyInfo != null && propertyInfo.CanWrite)
+                    propertyInfo.SetValue(entity, keyValue.Value);
+            }
+        }
+
+        await _context.SaveChangesAsync();
+    }
 
 }

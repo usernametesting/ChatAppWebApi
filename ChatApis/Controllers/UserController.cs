@@ -48,7 +48,7 @@ public class UserController : ControllerBase
         var result = await _userService.Delete(Id);
         return await _httpResult.Result(result);
     }
-  
+
     [HttpPost("Edit")]
     public async Task<IActionResult> Edit(UpdateUserDTO model)
     {
@@ -60,6 +60,13 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Recover(int Id)
     {
         var result = await _userService.Recover(Id);
+        return await _httpResult.Result(result);
+    }
+
+    [HttpPost("ChangedMessageState")]
+    public async Task<IActionResult> ChangedMessageState(int userId)
+    {
+        var result = await _userService.ChangeMessageStateAsync(userId);
         return await _httpResult.Result(result);
     }
 }

@@ -3,6 +3,7 @@ using Domain.Entities.Commons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ public interface IGenericWriteRepository<TEntity, Tkey> : IGenericRepository<TEn
     Task AddRangeAsync(IEnumerable<TEntity> entities);
 
     Task Update(Dictionary<string, object> obj, Tkey Id);
+    public Task UpdateMultipleAsync(Dictionary<string, object> updateValues, Expression<Func<TEntity, bool>> filter);
+ 
     Task Update(Tkey Id,TEntity model);
     Task Patch(TEntity entity);
 

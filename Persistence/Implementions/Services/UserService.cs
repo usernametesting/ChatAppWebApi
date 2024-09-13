@@ -33,7 +33,7 @@ public class UserService : IUserService
     private readonly IUserReadrepository<AppUser, int> userRepo;
 
 
-    public UserService(IUnitOfWork unitOfWork, IDeepCopy deepCopy, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor, IUserReadrepository<AppUser,int> userRepo)
+    public UserService(IUnitOfWork unitOfWork, IDeepCopy deepCopy, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor, IUserReadrepository<AppUser, int> userRepo)
     {
         _unitOfWork = unitOfWork;
         _deepCopy = deepCopy;
@@ -42,6 +42,31 @@ public class UserService : IUserService
         _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
         this.userRepo = userRepo;
+    }
+
+    public async Task<ServiceResult> ChangeMessageStateAsync(int userId)
+    {
+        var result = new ServiceResult();
+        var updateValues = new Dictionary<string, object>
+        {
+            { "State", 0},
+        };
+        try
+        {
+            await _unitOfWork.GetWriteRepository<Message, int>()
+                .UpdateMultipleAsync(updateValues, m => m.UserMessages.FromUserId == userId);
+            result.Success = true;
+            result.StatusCode = HttpStatusCode.OK;
+            result.Message = "message state changed";
+        }
+        catch (Exception e)
+        {
+            result.Success = false;
+            result.StatusCode = HttpStatusCode.BadGateway;
+            result.Message = e.InnerException?.Message;
+        }
+
+        return result;
     }
 
     public async Task<ServiceResult> Delete(int Id)
@@ -137,9 +162,17 @@ public class UserService : IUserService
         }
     }
 
-    public Task<ServiceResult<UserWithMessages>> GetCurrentlyUserAsync()
+    public async Task<ServiceResult<CurrentlyUser>> GetCurrentlyUserAsync()
     {
-        throw new NotImplementedException();
+        var currenltyUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(int.Parse(currenltyUserId!));
+        return new ServiceResult<CurrentlyUser>
+        {
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK,
+            resultObj = _mapper.Map<CurrentlyUser, AppUser>(user)
+        };
     }
 
     public async Task<ServiceResult<List<UserWithMessages>>> GetUsersWithMessagesAsync()

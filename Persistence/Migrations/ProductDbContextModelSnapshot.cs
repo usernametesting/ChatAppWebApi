@@ -22,6 +22,36 @@ namespace Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.ConcretEntities.LastViewedUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ViewedUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LastViewedUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.ConcretEntities.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -37,6 +67,9 @@ namespace Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("MessageType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("State")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
@@ -314,7 +347,7 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "aa59d2e6-89f4-4636-9da1-cd4712fa6338",
+                            ConcurrencyStamp = "be020b3c-3b42-4ea3-ae89-b5fb704a2d6e",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user1",
                             EmailConfirmed = true,
@@ -323,9 +356,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1",
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEInq10hPO0lpsa5X94xWIuc0k/9RykibQuQQJO7snlA37f7bMqIZthKYEbpr9eF0ng==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOJlZoZzIXXgmH9gkT6SEaHSa3EYdkwxa44bJUZtry4y9ocwM5cVLmnRDsyE/RHnew==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c12620ce-b7aa-4770-8859-77effdad1849",
+                            SecurityStamp = "afd560c4-971c-451b-a5f8-ed616cd3c296",
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -333,7 +366,7 @@ namespace Persistence.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c06b1be7-e953-48f5-980c-8383cc023275",
+                            ConcurrencyStamp = "62499a89-db67-4bff-a484-7a97a3af0cbb",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user2",
                             EmailConfirmed = true,
@@ -342,9 +375,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2",
                             NormalizedUserName = "USER2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEH21Z5SriHIrGuBJ8yMGGl+7ymtBcBosHBalC3yVmjeL56YPjcaOZkOJ5OxSoa7y7A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEH++U9l7lBeSZ3hYGjLE7dvijEH8wQcbr7aU3o50/7NXCe9B2s1mcp89Hm4xu3WsHA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "78b2197e-be62-48e2-bd4e-6e79cf84fb1f",
+                            SecurityStamp = "c46cc943-9216-49af-bb2c-badef66e839b",
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -352,7 +385,7 @@ namespace Persistence.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f0c871fd-9cfe-4754-acf5-fbb53e65729a",
+                            ConcurrencyStamp = "f6ae21a9-4f38-4056-bac9-b37c40b4f7af",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user3",
                             EmailConfirmed = true,
@@ -361,9 +394,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3",
                             NormalizedUserName = "USER3",
-                            PasswordHash = "AQAAAAIAAYagAAAAELHvWjfaEiPrN7IJm9Rt00DLGilBzxfvI+e2S83+N2zGbBl88bI0gANQd9/0c1lx7g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELSC6FYOmn1KBuanV7jJ0AFHke8WGZBVtslb5uZLvM9sruUXJwQoomREAAykTMgRjA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "37b5afd1-f235-42dd-b3ec-befeaf86f790",
+                            SecurityStamp = "239cbc6d-0cde-4c76-8130-4dbba684e0e7",
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         });
@@ -436,6 +469,17 @@ namespace Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.ConcretEntities.LastViewedUser", b =>
+                {
+                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "User")
+                        .WithMany("ViewedUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.ConcretEntities.Message", b =>
@@ -541,6 +585,8 @@ namespace Persistence.Migrations
                     b.Navigation("UserRoles");
 
                     b.Navigation("UserTokens");
+
+                    b.Navigation("ViewedUsers");
                 });
 #pragma warning restore 612, 618
         }

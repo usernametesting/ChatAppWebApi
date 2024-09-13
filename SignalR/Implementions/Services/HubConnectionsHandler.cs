@@ -42,7 +42,7 @@ public class HubConnectionsHandler : IHubConnectionsHandler
         user.ConnectionId = null;
         user.IsOnline = false;
 
-        user.LastActivityDate = DateTime.UtcNow.ToString("HH:mm:ss");
+        user.LastActivityDate = DateTime.UtcNow.ToLocalTime().ToString("HH:mm:ss") + " PM";
         await _unitOfWork.Commit();
         await SendAll("UserDisconnected", user.Id.ToString());
     }
@@ -77,7 +77,8 @@ public class HubConnectionsHandler : IHubConnectionsHandler
         var toUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync((int)model.toUserId);
         model.toUserId = GetUserIdByToken();
         model.IsSender = !model.IsSender;
-        await hub.Clients.Client(toUser.ConnectionId).SendAsync("ReceivedMessage", model);
+        if (toUser.ConnectionId is not null)
+            await hub.Clients.Client(toUser?.ConnectionId).SendAsync("ReceivedMessage", model);
         await _unitOfWork.Commit();
     }
 

@@ -87,6 +87,29 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LastViewedUser",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ViewedUserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LastViewedUser", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LastViewedUser_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserClaims",
                 columns: table => new
                 {
@@ -213,9 +236,10 @@ namespace Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MessageType = table.Column<int>(type: "int", nullable: false),
                     UserMessagesId = table.Column<int>(type: "int", nullable: false),
                     isSender = table.Column<bool>(type: "bit", nullable: false),
+                    MessageType = table.Column<int>(type: "int", nullable: false),
+                    State = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -240,15 +264,20 @@ namespace Persistence.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "aa59d2e6-89f4-4636-9da1-cd4712fa6338", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", "AQAAAAIAAYagAAAAEInq10hPO0lpsa5X94xWIuc0k/9RykibQuQQJO7snlA37f7bMqIZthKYEbpr9eF0ng==", null, false, null, null, "c12620ce-b7aa-4770-8859-77effdad1849", false, null, "user1" },
-                    { 2, 0, "c06b1be7-e953-48f5-980c-8383cc023275", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", "AQAAAAIAAYagAAAAEH21Z5SriHIrGuBJ8yMGGl+7ymtBcBosHBalC3yVmjeL56YPjcaOZkOJ5OxSoa7y7A==", null, false, null, null, "78b2197e-be62-48e2-bd4e-6e79cf84fb1f", false, null, "user2" },
-                    { 3, 0, "f0c871fd-9cfe-4754-acf5-fbb53e65729a", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", "AQAAAAIAAYagAAAAELHvWjfaEiPrN7IJm9Rt00DLGilBzxfvI+e2S83+N2zGbBl88bI0gANQd9/0c1lx7g==", null, false, null, null, "37b5afd1-f235-42dd-b3ec-befeaf86f790", false, null, "user3" }
+                    { 1, 0, "be020b3c-3b42-4ea3-ae89-b5fb704a2d6e", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", "AQAAAAIAAYagAAAAEOJlZoZzIXXgmH9gkT6SEaHSa3EYdkwxa44bJUZtry4y9ocwM5cVLmnRDsyE/RHnew==", null, false, null, null, "afd560c4-971c-451b-a5f8-ed616cd3c296", false, null, "user1" },
+                    { 2, 0, "62499a89-db67-4bff-a484-7a97a3af0cbb", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", "AQAAAAIAAYagAAAAEH++U9l7lBeSZ3hYGjLE7dvijEH8wQcbr7aU3o50/7NXCe9B2s1mcp89Hm4xu3WsHA==", null, false, null, null, "c46cc943-9216-49af-bb2c-badef66e839b", false, null, "user2" },
+                    { 3, 0, "f6ae21a9-4f38-4056-bac9-b37c40b4f7af", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", "AQAAAAIAAYagAAAAELSC6FYOmn1KBuanV7jJ0AFHke8WGZBVtslb5uZLvM9sruUXJwQoomREAAykTMgRjA==", null, false, null, null, "239cbc6d-0cde-4c76-8130-4dbba684e0e7", false, null, "user3" }
                 });
 
             migrationBuilder.InsertData(
                 table: "UsersRoles",
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[] { 1, 1 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LastViewedUser_UserId",
+                table: "LastViewedUser",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_UserMessagesId",
@@ -352,6 +381,9 @@ namespace Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "LastViewedUser");
+
             migrationBuilder.DropTable(
                 name: "Messages");
 

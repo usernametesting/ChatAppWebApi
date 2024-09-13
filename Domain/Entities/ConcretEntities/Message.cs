@@ -9,9 +9,10 @@ public class Message : BaseEntity<int>,IBaseEntity<int>
 {
     public string ?Content{ get; set; }
 
-    public MessageType MessageType { get; set; }
     public int UserMessagesId{ get; set; }
     public virtual UsersMessages UserMessages { get; set; }
     public bool isSender { get; set; }
+    public MessageType MessageType { get; set; }
+    public MessageState State { get; set; }
 
 }

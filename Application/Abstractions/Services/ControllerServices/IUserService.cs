@@ -17,8 +17,10 @@ public interface IUserService
     Task<ServiceResult<List<AppUser>>> GetAllAsync();
     Task<ServiceResult<List<AppUser>>> GetAllDataAsync ();
     Task<ServiceResult<UpdateUserDTO>> GetByIdAsync(int id);
-    Task<ServiceResult<UserWithMessages>> GetCurrentlyUserAsync();
+    Task<ServiceResult<CurrentlyUser>> GetCurrentlyUserAsync();
+    Task<ServiceResult> ChangeMessageStateAsync(int userId);
     Task<ServiceResult<List<UserWithMessages>>> GetUsersWithMessagesAsync();
+
 
     Task<ServiceResult> Delete(int Id);
     Task<ServiceResult> Recover(int Id);

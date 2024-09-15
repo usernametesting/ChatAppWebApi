@@ -2,6 +2,7 @@
 using Application.DTOs.UsersDTOs;
 using Application.Repositories.Users;
 using Domain.Entities.ConcretEntities;
+using Domain.Enums.MessageEnums;
 using ETicaretAPI.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence.DbContexts;
@@ -20,13 +21,13 @@ public class UserReadRepository : GenericReadRepository<AppUser, int>, IUserRead
 
     }
 
-    public async Task<List<UserWithMessages>> GetUsersWithMessages(int senderId)
+    public async Task<List<UserDTO>> GetUsersWithMessages(int senderId)
     {
         var userWithMessages = await _entity
        .Where(user=>user.Id!=senderId)
       .Select(u => new
       {
-          User = new UserWithMessages
+          User = new UserDTO
           {
               Id = u.Id,
               UserName = u.UserName,
@@ -39,10 +40,15 @@ public class UserReadRepository : GenericReadRepository<AppUser, int>, IUserRead
                       Message = um.Message.Content,
                       MessageType = um.Message.MessageType,
                       CreatedDate = um.CreatedDate,
-                      IsSender = (senderId==um.FromUserId)
+                      IsSender = (senderId==um.FromUserId),
+                      State = um.Message.State
+                      
                   })
                   .OrderBy(m => m.CreatedDate)  
-                  .ToList()
+                  .ToList(),
+              UnreadMessageCount = _context.UsersMessages
+                .Where(um => um.FromUserId == u.Id && um.ToUserId == senderId && um.Message.State!=MessageState.SEEN)
+                .Count()
           },
           LastMessageDate = _context.UsersMessages
               .Where(um => um.FromUserId == u.Id || um.ToUserId == u.Id)

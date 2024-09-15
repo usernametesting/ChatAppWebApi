@@ -2,6 +2,7 @@
 using Application.Abstractions.Services.Authentications;
 using Application.Abstractions.Services.ControllerServices;
 using Application.Abstractions.Services.InternalServices;
+using Application.Helpers.Users;
 using Application.Repositories.Commons;
 using Application.Repositories.Products;
 using Application.Repositories.Users;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.DbContexts;
+using Persistence.Helpers;
 using Persistence.IdentityCustoms;
 using Persistence.Implementions.Services;
 using Persistence.Repositories.Concrets.Messages;
@@ -40,7 +42,9 @@ public static class ServiceRegistration
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserHelper, UserHelper>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserReadrepository<AppUser, int>, UserReadRepository>();
 

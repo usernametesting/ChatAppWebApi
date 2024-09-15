@@ -1,72 +1,58 @@
 ﻿using Application.Abstractions.Services;
 using Application.Abstractions.Services.ControllerServices;
-using Application.Abstractions.Services.InternalServices;
+using Application.Abstractions.Services.ExternalServices;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.Common;
 using Application.DTOs.SignalRDTOs;
 using Application.DTOs.UsersDTOs;
-using Application.Repositories.Products;
+using Application.Helpers.Users;
 using Application.Repositories.Users;
 using Application.UnitOfWorks;
 using Domain.Entities.ConcretEntities;
+using Domain.Enums.MessageEnums;
 using ETicaretAPI.Domain.Entities.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Repositories.Concrets.Users;
 using System.Collections;
 using System.Data;
 using System.Net;
-using System.Security.Claims;
 
 
 namespace Persistence.Implementions.Services;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IDeepCopy _deepCopy;
+    private readonly IUserHelper _helper;
     private readonly IAutoMapperConfiguration _mapper;
     private readonly RoleManager<AppRole> _roleManager;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IGCService _gcService;
     private readonly IUserReadrepository<AppUser, int> userRepo;
 
 
-    public UserService(IUnitOfWork unitOfWork, IDeepCopy deepCopy, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor, IUserReadrepository<AppUser, int> userRepo)
+
+
+    public UserService(IUserHelper helper, IUnitOfWork unitOfWork, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IUserReadrepository<AppUser, int> userRepo, IGCService gcService)
     {
         _unitOfWork = unitOfWork;
-        _deepCopy = deepCopy;
         _mapper = mapper;
         _roleManager = roleManager;
         _userManager = userManager;
-        _httpContextAccessor = httpContextAccessor;
         this.userRepo = userRepo;
+        _helper = helper;
+        _gcService = gcService;
     }
 
-    public async Task<ServiceResult> ChangeMessageStateAsync(int userId)
+    public async Task<ServiceResult<string>> ChangeUserImageAsync(IFormFile formFile)
     {
-        var result = new ServiceResult();
-        var updateValues = new Dictionary<string, object>
+        await _gcService.UploadFileAsync(formFile, "hesen");
+        return new ServiceResult<string>
         {
-            { "State", 0},
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK
         };
-        try
-        {
-            await _unitOfWork.GetWriteRepository<Message, int>()
-                .UpdateMultipleAsync(updateValues, m => m.UserMessages.FromUserId == userId);
-            result.Success = true;
-            result.StatusCode = HttpStatusCode.OK;
-            result.Message = "message state changed";
-        }
-        catch (Exception e)
-        {
-            result.Success = false;
-            result.StatusCode = HttpStatusCode.BadGateway;
-            result.Message = e.InnerException?.Message;
-        }
-
-        return result;
     }
 
     public async Task<ServiceResult> Delete(int Id)
@@ -164,8 +150,8 @@ public class UserService : IUserService
 
     public async Task<ServiceResult<CurrentlyUser>> GetCurrentlyUserAsync()
     {
-        var currenltyUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(int.Parse(currenltyUserId!));
+        var currenltyUserId = _helper.GetCurrentlyUserId();
+        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(currenltyUserId);
         return new ServiceResult<CurrentlyUser>
         {
             Success = true,
@@ -175,12 +161,12 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<ServiceResult<List<UserWithMessages>>> GetUsersWithMessagesAsync()
+    public async Task<ServiceResult<List<UserDTO>>> GetUsersWithMessagesAsync()
     {
-        var senderId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var messages = await userRepo.GetUsersWithMessages(int.Parse(senderId!));
+        var senderId = _helper.GetCurrentlyUserId();
+        var messages = await userRepo.GetUsersWithMessages(int.Parse(senderId.ToString()));
 
-        return new ServiceResult<List<UserWithMessages>>
+        return new ServiceResult<List<UserDTO>>
         {
             Success = true,
             Message = "succsess",
@@ -188,6 +174,8 @@ public class UserService : IUserService
             resultObj = messages
         };
     }
+
+
 
     public async Task<ServiceResult> Recover(int Id)
     {
@@ -288,5 +276,57 @@ public class UserService : IUserService
 
     }
 
+    public async Task<ServiceResult<string>> UpdateMessageStateOnConnectedAsync(string connectionId)
+    {
+        var result = new ServiceResult<string>();
+        try
+        {
+            var a = _helper.GetUserIdByToken();
+            var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetUserIdByToken());
+            user.ConnectionId = connectionId;
+            user.IsOnline = true;
+
+            var updateValues = new Dictionary<string, object>
+            {
+                { "State", MessageState.NOTIFIED},
+            };
+
+            await _unitOfWork.GetWriteRepository<Message, int>()
+                           .UpdateMultipleAsync(updateValues, m => m.UserMessages.ToUserId == user.Id
+                                                && m.UserMessages.Message.State != MessageState.SEEN);
+
+            await _unitOfWork.Commit();
+            result.Success = true;
+            result.Message = "succsess";
+            result.StatusCode = HttpStatusCode.OK;
+            result.resultObj = user.Id.ToString();
+        }
+        catch (Exception e)
+        {
+            result.Success = false;
+            result.Message = e.InnerException?.Message ?? e.Message;
+            result.StatusCode = HttpStatusCode.BadRequest;
+        }
+
+
+        return result;
+    }
+
+    public async Task<ServiceResult<string>> UpdateUserStateOnDisconnectAsync()
+    {
+        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetUserIdByToken());
+        user.ConnectionId = null;
+        user.IsOnline = false;
+
+        user.LastActivityDate = DateTime.UtcNow.ToLocalTime().ToString("HH:mm:ss") + " PM";
+        await _unitOfWork.Commit();
+        return new ServiceResult<string>()
+        {
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK,
+            resultObj = user.Id.ToString()
+        };
+    }
 
 }

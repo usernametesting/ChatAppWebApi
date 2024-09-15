@@ -2,6 +2,8 @@
 
 public class CurrentlyUser
 {
+    public int Id { get; set; }
     public string? UserName { get; set; }
-
+    public bool IsOnline { get; set; }
+    public string? LastActivityDate { get; set; }
 }

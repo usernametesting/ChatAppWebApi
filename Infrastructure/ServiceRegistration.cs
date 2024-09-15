@@ -2,6 +2,7 @@
 using Application.Abstractions.Services.ExternalServices;
 using Application.Abstractions.Services.InternalServices;
 using Application.DTOs.Tokens;
+using ExampleForGoogleCloud.Services;
 using Infrastructure.Abstractions.Services.Token;
 using Infrastructure.Impementions.Helpers;
 using Infrastructure.Impementions.Services.ExternalServices;
@@ -19,6 +20,8 @@ public  static class ServiceRegistration
         services.AddScoped<ITokenHandler, TokenHandler>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IDeepCopy, DeepCopy>();
+        services.AddScoped<IGCService,GCService>();
+
 
         return services;
     }

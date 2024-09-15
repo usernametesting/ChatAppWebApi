@@ -4,6 +4,7 @@ using Application.DTOs.SignalRDTOs;
 using Application.DTOs.UsersDTOs;
 using Domain.Entities.ConcretEntities;
 using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,11 @@ public interface IUserService
     Task<ServiceResult<List<AppUser>>> GetAllDataAsync ();
     Task<ServiceResult<UpdateUserDTO>> GetByIdAsync(int id);
     Task<ServiceResult<CurrentlyUser>> GetCurrentlyUserAsync();
-    Task<ServiceResult> ChangeMessageStateAsync(int userId);
-    Task<ServiceResult<List<UserWithMessages>>> GetUsersWithMessagesAsync();
+    Task<ServiceResult<string>> UpdateMessageStateOnConnectedAsync(string connectionId);
+    Task<ServiceResult<string>> UpdateUserStateOnDisconnectAsync();
+    Task<ServiceResult<string>> ChangeUserImageAsync(IFormFile formFile);
+
+    Task<ServiceResult<List<UserDTO>>> GetUsersWithMessagesAsync();
 
 
     Task<ServiceResult> Delete(int Id);

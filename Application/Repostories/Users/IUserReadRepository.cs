@@ -9,6 +9,6 @@ namespace Application.Repositories.Users;
 public interface IUserReadrepository<TEntity, TKey> 
     : IGenericReadRepository<TEntity,TKey> where TEntity : IBaseEntity<TKey>
 {
-    Task<List<UserWithMessages>> GetUsersWithMessages(int senderId);
+    Task<List<UserDTO>> GetUsersWithMessages(int senderId);
 
 }

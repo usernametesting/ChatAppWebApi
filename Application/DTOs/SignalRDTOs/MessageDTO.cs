@@ -9,4 +9,5 @@ public class MessageDTO
     public bool IsSender { get; set; }
     public DateTime CreatedDate { get; set; }
     public int? toUserId { get; set; }
+    public MessageState State{ get; set; }
 }

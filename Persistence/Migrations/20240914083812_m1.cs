@@ -45,6 +45,7 @@ namespace Persistence.Migrations
                     IsOnline = table.Column<bool>(type: "bit", nullable: false),
                     LastActivityDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    OnFocusUserId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -63,6 +64,11 @@ namespace Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Users_OnFocusUserId",
+                        column: x => x.OnFocusUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -261,12 +267,12 @@ namespace Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OnFocusUserId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "be020b3c-3b42-4ea3-ae89-b5fb704a2d6e", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", "AQAAAAIAAYagAAAAEOJlZoZzIXXgmH9gkT6SEaHSa3EYdkwxa44bJUZtry4y9ocwM5cVLmnRDsyE/RHnew==", null, false, null, null, "afd560c4-971c-451b-a5f8-ed616cd3c296", false, null, "user1" },
-                    { 2, 0, "62499a89-db67-4bff-a484-7a97a3af0cbb", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", "AQAAAAIAAYagAAAAEH++U9l7lBeSZ3hYGjLE7dvijEH8wQcbr7aU3o50/7NXCe9B2s1mcp89Hm4xu3WsHA==", null, false, null, null, "c46cc943-9216-49af-bb2c-badef66e839b", false, null, "user2" },
-                    { 3, 0, "f6ae21a9-4f38-4056-bac9-b37c40b4f7af", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", "AQAAAAIAAYagAAAAELSC6FYOmn1KBuanV7jJ0AFHke8WGZBVtslb5uZLvM9sruUXJwQoomREAAykTMgRjA==", null, false, null, null, "239cbc6d-0cde-4c76-8130-4dbba684e0e7", false, null, "user3" }
+                    { 1, 0, "483eb92a-52e5-4eaa-99cc-45da81f78d90", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", null, "AQAAAAIAAYagAAAAEHtZHuleNDmTDXc5Du88qptCCJA80jvpSfysP7juvKAX7pN9KgPpjdgfpo529xEYwg==", null, false, null, null, "2455c13f-c6a0-48ce-9c03-a91d240b68f1", false, null, "user1" },
+                    { 2, 0, "e44f394f-6058-4c34-8f7e-9fa14e046bc7", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", null, "AQAAAAIAAYagAAAAECI86MkVT+s3TIrPVHKepgCqPFfnxLvc5vaY9jf/oKwYpdHUg+GNspHa1uzsNb4GDw==", null, false, null, null, "60bf6a12-c933-4df9-9dc0-54871ef6cb6b", false, null, "user2" },
+                    { 3, 0, "27235aee-b5ed-4590-88de-875e4f4da9c7", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", null, "AQAAAAIAAYagAAAAEITAA5lVW9z2Urn+9cWHNKFKS4PdH+dvl2W29FeKGp7n0mo+45BrTBtBMpGRb/BMag==", null, false, null, null, "409ff7ac-2846-4853-bd1e-73ab10767adb", false, null, "user3" }
                 });
 
             migrationBuilder.InsertData(
@@ -337,6 +343,11 @@ namespace Persistence.Migrations
                 columns: new[] { "NormalizedUserName", "IsDeleted" },
                 unique: true,
                 filter: "[IsDeleted] = 0");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_OnFocusUserId",
+                table: "Users",
+                column: "OnFocusUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UserName",

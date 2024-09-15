@@ -11,7 +11,6 @@ using SignalR.Helpers;
 using System.Runtime.InteropServices;
 
 namespace SignalR.Hubs;
-//[Authorize]
 public class ChatHub : Hub, IChatHub
 {
 
@@ -34,18 +33,6 @@ public class ChatHub : Hub, IChatHub
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task SendMessage(MessageDTO model)
-    {
-        await _handler.SendMessage(model);
-    }
 
-    //public async Task SendMessage(string toUserId, string message)
-    //{
-    //    //var fromUser = (await service.GetCollection<ActiveUserModel>("activeUserss").FindAsync(u => u.ConnectionId == Context.ConnectionId)).First();
 
-    //    //string toUserConnectionId
-    //    //    = (await service.GetCollection<ActiveUserModel>("activeUserss").FindAsync(u => u.UserId == toUserId)).First().ConnectionId;
-
-    //    await Clients.Client(toUserConnectionId).SendAsync("ReceiveMessage", fromUser.UserName, message);
-    //}
 }

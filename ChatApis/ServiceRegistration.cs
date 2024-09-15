@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Services;
+using Application.ConfigurationsMapping;
 using ChatApis.Helpers;
 using CompositionRoot;
 using ETicaretAPI.Domain.Entities.Identity;
@@ -14,11 +15,12 @@ public static class ServiceRegistration
     public static IServiceCollection AddPresentationService(this IServiceCollection services,IConfiguration configuration)
     {
         //services.AddScoped<UserManager<,>,CustomUserManager<,>>();
+        services.Configure<GCSetting>(configuration);
+        services.AddHttpContextAccessor();
         services.AddScoped<HttpResult>();
         services.AddApplicationDependencies(configuration);
-        services.AddHttpContextAccessor();
         services.AddSignalR();
-        services.AddHttpContextAccessor();
+
         return services;
     }
 }

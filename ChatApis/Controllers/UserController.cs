@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Services.ControllerServices;
 using Application.DTOs.AuthDTOs;
+using Application.DTOs.SignalRDTOs;
 using ChatApis.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,17 +16,20 @@ namespace ChatApis.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IMessageService _messageService;
     private readonly HttpResult _httpResult;
 
-    public UserController(IUserService userService, HttpResult checker)
+    public UserController(IUserService userService, HttpResult checker, IMessageService messageService)
     {
         _userService = userService;
         _httpResult = checker;
+        _messageService = messageService;
     }
 
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAll()
     {
+        var A = HttpContext;
         var result = (await _userService.GetAllAsync());
         return await _httpResult.Result(result);
     }
@@ -64,9 +68,22 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("ChangedMessageState")]
-    public async Task<IActionResult> ChangedMessageState(int userId)
+    public async Task<IActionResult> ChangedMessageState([FromBody] int userId)
     {
-        var result = await _userService.ChangeMessageStateAsync(userId);
+        var result = await _messageService.ChangeMessageStateAsync(userId);
+        return await _httpResult.Result(result);
+    }
+    [HttpPost("[action]")]
+    public async Task<IActionResult> PostMessage(MessageDTO model)
+    {
+        var result = await _messageService.PostMessageToUserAsync(model);
+        return await _httpResult.Result(result);
+    }
+
+    [HttpPost("[action]")]
+    public async Task<IActionResult> ChangeUserImage([FromForm] IFormFile formFile)
+    {
+        var result = await _userService.ChangeUserImageAsync(formFile);
         return await _httpResult.Result(result);
     }
 }

@@ -40,11 +40,10 @@ namespace ChatApis
                 options.AddPolicy("AllowOrigin",
                     builder =>
                     {
-                        builder.WithOrigins("http://127.0.0.1:5500", "http://localhost:5173", "http://192.168.100.9:5173")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials();
+                        builder.SetIsOriginAllowed(origin => true)
+                               .AllowAnyMethod()
+                               .AllowAnyHeader()
+                               .AllowCredentials();
                     });
             });
             var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);

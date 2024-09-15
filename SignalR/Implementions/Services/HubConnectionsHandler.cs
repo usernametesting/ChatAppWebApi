@@ -1,4 +1,6 @@
-﻿using Application.Abstractions.Services.SignalRServices;
+﻿using Application.Abstractions.Services.ControllerServices;
+using Application.Abstractions.Services.SignalRServices;
+using Application.DTOs.Common;
 using Application.DTOs.SignalRDTOs;
 using Application.UnitOfWorks;
 using Domain.BaseModels;
@@ -8,80 +10,55 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.Helpers;
 using SignalR.Hubs;
+using System.Net;
 using System.Reflection;
 
 namespace SignalR.Implementions.Services;
 
 public class HubConnectionsHandler : IHubConnectionsHandler
 {
-    private readonly IHttpContextAccessor _contextAccessor;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserService _userService;
     private readonly IHubContext<ChatHub> hub;
 
-    public HubConnectionsHandler(IHttpContextAccessor contextAccessor, IUnitOfWork unitOfWork, IHubContext<ChatHub> hub)
+    public HubConnectionsHandler(IHubContext<ChatHub> hub, IUserService userService)
     {
-        _contextAccessor = contextAccessor;
-        _unitOfWork = unitOfWork;
         this.hub = hub;
+        _userService = userService;
     }
 
     public async Task OnConnected(string connectionId)
     {
-        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(GetUserIdByToken());
-        user.ConnectionId = connectionId;
-        user.IsOnline = true;
-        await _unitOfWork.Commit();
-        await SendAll("UserConnected", user.Id.ToString());
-
+        var result = await _userService.UpdateMessageStateOnConnectedAsync(connectionId);
+        await SendAll("UserConnected", result.resultObj!);
     }
 
     public async Task OnDisconnected()
     {
-
-        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(GetUserIdByToken());
-        user.ConnectionId = null;
-        user.IsOnline = false;
-
-        user.LastActivityDate = DateTime.UtcNow.ToLocalTime().ToString("HH:mm:ss") + " PM";
-        await _unitOfWork.Commit();
-        await SendAll("UserDisconnected", user.Id.ToString());
+        var result = await _userService.UpdateUserStateOnDisconnectAsync();
+        await SendAll("UserDisconnected", result.resultObj!);
     }
 
     private async Task SendAll(string method, string param) =>
             await hub.Clients.All.SendAsync(method, param);
 
-    private int GetUserIdByToken()
+
+
+    public async Task SendMessage(MessageDTO model, string connectionId)
     {
-        var token = _contextAccessor.HttpContext.Request.Query["access_token"];
-        var userId = JwtDecryptor.Decrypt(token!);
-        return int.Parse(userId!);
+        if (connectionId is not null)
+            await hub.Clients.Client(connectionId).SendAsync("ReceivedMessage", model);
     }
 
-    public async Task SendMessage(MessageDTO model)
+    public async Task OnChangedMessageState(string focusedConnectionId, string currentConnectionId, int userId)
     {
-        var userMessages = _unitOfWork.GetWriteRepository<UsersMessages, int>();
-        await userMessages.AddAsync(new()
+        if (focusedConnectionId is not null)
         {
-            CreatedDate = DateTime.UtcNow,
-            FromUserId = GetUserIdByToken(),
-            ToUserId = (int)model.toUserId!,
-            Message = new Message()
-            {
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now,
-                Content = model.Message,
-                MessageType = model.MessageType
-            }
-        });
+            await hub.Clients.Client(focusedConnectionId).SendAsync("OnUserFocusConnectedToMe", userId);
+            await hub.Clients.AllExcept(focusedConnectionId, currentConnectionId).SendAsync("OnUserFocusDisconnectedToMe", userId);
+        }
+        else
+            await hub.Clients.AllExcept(currentConnectionId).SendAsync("OnUserFocusDisconnectedToMe", userId);
 
-        var toUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync((int)model.toUserId);
-        model.toUserId = GetUserIdByToken();
-        model.IsSender = !model.IsSender;
-        if (toUser.ConnectionId is not null)
-            await hub.Clients.Client(toUser?.ConnectionId).SendAsync("ReceivedMessage", model);
-        await _unitOfWork.Commit();
     }
-
-
 }
 

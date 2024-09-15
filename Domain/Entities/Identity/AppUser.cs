@@ -18,12 +18,15 @@ namespace ETicaretAPI.Domain.Entities.Identity
         public bool IsOnline { get; set; }
         public string? LastActivityDate { get; set; }
 
-        public virtual ICollection<AppUserRole>? UserRoles { get; set; }
         public bool IsDeleted { get; set; }
+        public virtual ICollection<AppUserRole>? UserRoles { get; set; }
 
-        public virtual ICollection<LastViewedUser> ?ViewedUsers { get; set; }
+        public virtual ICollection<LastViewedUser>? ViewedUsers { get; set; }
         public virtual ICollection<UsersMessages>? Messages { get; set; }
         public virtual ICollection<AppUserToken>? UserTokens { get; set; }
+
+        public int? OnFocusUserId { get; set; }
+        public virtual AppUser? OnFocusUser { get; set; }
 
         public AppUser()
         {

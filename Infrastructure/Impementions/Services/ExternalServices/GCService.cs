@@ -16,7 +16,7 @@ public class GCService : IGCService
     private readonly GoogleCredential _googleCredential;
     StorageClient storageClient = null;
 
-    public GCService( IOptions<GCSetting> options)
+    public GCService(IOptions<GCSetting> options)
     {
         _gcConfigs = options.Value;
         _googleCredential = GoogleCredential.FromJson(File.ReadAllText(_gcConfigs.SettingsPath!));
@@ -29,31 +29,35 @@ public class GCService : IGCService
     }
 
     [Obsolete]
-    public async Task<string> GetFileAsync(string fileName, int timeOut = 600)
+    public async Task<string> GetFileAsync(string fileName, int timeOut = 6000)
     {
         var ServicCredential = _googleCredential.UnderlyingCredential as ServiceAccountCredential;
 
         var urlSigner = UrlSigner.FromServiceAccountCredential(ServicCredential);
 
-        var imageUrl = await urlSigner.SignAsync(_gcConfigs.BucketName, fileName, TimeSpan.FromTicks(timeOut));
-        return imageUrl;
+        string url;
+        try
+        {
+            url = await urlSigner.SignAsync(_gcConfigs.BucketName, fileName, TimeSpan.FromSeconds(timeOut));
+
+        }
+        catch (Exception e)
+        {
+
+            throw;
+        }
+
+        return url;
     }
 
     public async Task<string> UploadFileAsync(IFormFile file, string fileName)
     {
         using var memoryStream = new MemoryStream();
         await file.CopyToAsync(memoryStream);
-        try
-        {
         var obj = await storageClient.UploadObjectAsync(_gcConfigs.BucketName, fileName, file.ContentType, memoryStream);
-        return obj.MediaLink;
-
-        }
-        catch (Exception e)
-        {
-            return "asdada";
-        }
 
 
+        var url = await GetFileAsync(fileName);
+        return url;
     }
 }

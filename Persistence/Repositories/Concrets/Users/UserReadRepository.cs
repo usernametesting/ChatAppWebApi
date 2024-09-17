@@ -33,6 +33,7 @@ public class UserReadRepository : GenericReadRepository<AppUser, int>, IUserRead
               UserName = u.UserName,
               IsOnline  = u.IsOnline,
               LastActivityDate = u.LastActivityDate ??  "never signed",
+              ProfImageUrl = u.ProfImageUrl,
               Messages = _context.UsersMessages
                   .Where(um => (um.FromUserId == u.Id && um.ToUserId==senderId)||( um.ToUserId == u.Id && um.FromUserId==senderId))
                   .Select(um => new MessageDTO

@@ -6,4 +6,5 @@ public class CurrentlyUser
     public string? UserName { get; set; }
     public bool IsOnline { get; set; }
     public string? LastActivityDate { get; set; }
+    public string? ProfImageUrl{ get; set; }
 }

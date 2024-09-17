@@ -25,6 +25,7 @@ public class MessageService : IMessageService
         _helper = helper;
         this.hubConnectionsHandler = hubConnectionsHandler;
     }
+
     public async Task<ServiceResult> PostMessageToUserAsync(MessageDTO model)
     {
         var userMessages = _unitOfWork.GetWriteRepository<UsersMessages, int>();

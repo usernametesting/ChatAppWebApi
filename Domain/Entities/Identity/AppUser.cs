@@ -14,7 +14,7 @@ namespace ETicaretAPI.Domain.Entities.Identity
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string? ConnectionId { get; set; }
-
+        public string? ProfImageUrl { get; set; }
         public bool IsOnline { get; set; }
         public string? LastActivityDate { get; set; }
 

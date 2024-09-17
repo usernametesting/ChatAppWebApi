@@ -10,6 +10,7 @@ public class UserDTO
     public bool IsOnline { get; set; }
     public string? LastActivityDate { get; set; }
     public int UnreadMessageCount { get; set; }
+    public string? ProfImageUrl { get; set; }
 
     public List<MessageDTO>? Messages { get; set; }
 }

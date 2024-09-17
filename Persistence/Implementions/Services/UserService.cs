@@ -46,7 +46,13 @@ public class UserService : IUserService
 
     public async Task<ServiceResult<string>> ChangeUserImageAsync(IFormFile formFile)
     {
-        await _gcService.UploadFileAsync(formFile, "hesen");
+        var url = await _gcService.UploadFileAsync(formFile, formFile.FileName);
+
+        var currentlyUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetCurrentlyUserId());
+
+        currentlyUser.ProfImageUrl = url;
+
+        await _unitOfWork.Commit();
         return new ServiceResult<string>
         {
             Success = true,

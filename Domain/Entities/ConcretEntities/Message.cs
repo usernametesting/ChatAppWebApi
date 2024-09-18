@@ -15,4 +15,5 @@ public class Message : BaseEntity<int>,IBaseEntity<int>
     public MessageType MessageType { get; set; }
     public MessageState State { get; set; }
 
+
 }

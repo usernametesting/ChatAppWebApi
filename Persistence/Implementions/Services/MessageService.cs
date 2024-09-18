@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Services.ControllerServices;
+using Application.Abstractions.Services.ExternalServices;
 using Application.Abstractions.Services.SignalRServices;
 using Application.DTOs.Common;
 using Application.DTOs.SignalRDTOs;
@@ -7,6 +8,7 @@ using Application.UnitOfWorks;
 using Domain.Entities.ConcretEntities;
 using Domain.Enums.MessageEnums;
 using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Http;
 using SignalR.Implementions.Services;
 using System.Net;
 using System.Reflection.Metadata;
@@ -18,12 +20,15 @@ public class MessageService : IMessageService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserHelper _helper;
     private readonly IHubConnectionsHandler hubConnectionsHandler;
+    private readonly IGCService _gcService;
 
-    public MessageService(IUnitOfWork unitOfWork, IUserHelper helper, IHubConnectionsHandler hubConnectionsHandler)
+
+    public MessageService(IUnitOfWork unitOfWork, IUserHelper helper, IHubConnectionsHandler hubConnectionsHandler, IGCService gcService)
     {
         _unitOfWork = unitOfWork;
         _helper = helper;
         this.hubConnectionsHandler = hubConnectionsHandler;
+        _gcService = gcService;
     }
 
     public async Task<ServiceResult> PostMessageToUserAsync(MessageDTO model)
@@ -82,6 +87,42 @@ public class MessageService : IMessageService
             Success = true,
             StatusCode = HttpStatusCode.OK,
             Message = "succsess",
+        };
+    }
+
+    public async Task<ServiceResult> PostFile(MessageDTO model)
+    {
+        var url = await _gcService.UploadFileAsync(model.File!, model.File!.FileName);
+
+        var userMessages = _unitOfWork.GetWriteRepository<UsersMessages, int>();
+        await userMessages.AddAsync(new()
+        {
+            CreatedDate = DateTime.UtcNow,
+            FromUserId = _helper.GetCurrentlyUserId(),
+            ToUserId = (int)model.toUserId!,
+            Message = new Message()
+            {
+                CreatedDate = DateTime.Now,
+                UpdatedDate = DateTime.Now,
+                Content = url,
+                MessageType = model.MessageType,
+                State = model.State
+
+            }
+        });
+
+        var toUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync((int)model.toUserId);
+        model.toUserId = _helper.GetCurrentlyUserId();
+        model.IsSender = !model.IsSender;
+        model.Message = url;
+        await _unitOfWork.Commit();
+        await hubConnectionsHandler.SendMessage(model, toUser.ConnectionId!);
+
+        return new ServiceResult()
+        {
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK,
         };
     }
 }

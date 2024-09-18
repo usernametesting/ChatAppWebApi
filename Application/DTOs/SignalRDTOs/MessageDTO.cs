@@ -1,4 +1,5 @@
 ﻿using Domain.Enums.MessageEnums;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.DTOs.SignalRDTOs;
 
@@ -9,5 +10,6 @@ public class MessageDTO
     public bool IsSender { get; set; }
     public DateTime CreatedDate { get; set; }
     public int? toUserId { get; set; }
-    public MessageState State{ get; set; }
+    public MessageState State { get; set; }
+    public IFormFile? File { get; set; }
 }

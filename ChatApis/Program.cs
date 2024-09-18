@@ -74,7 +74,7 @@ namespace ChatApis
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-            app.MapHub<ChatHub>("/chatHub");
+            app.MapHub<ChatHub>("/api/chatHub");
             app.MapControllers();
 
             app.Run();

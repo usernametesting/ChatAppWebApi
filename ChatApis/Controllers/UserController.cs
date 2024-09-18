@@ -81,6 +81,13 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("[action]")]
+    public async Task<IActionResult> PostFile(MessageDTO model)
+    {
+        var result = await _messageService.PostFile(model);
+        return await _httpResult.Result(result);
+    }
+
+    [HttpPost("[action]")]
     public async Task<IActionResult> ChangeUserImage([FromForm] IFormFile formFile)
     {
         var result = await _userService.ChangeUserImageAsync(formFile);

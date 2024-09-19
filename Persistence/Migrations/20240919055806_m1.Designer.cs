@@ -12,8 +12,8 @@ using Persistence.DbContexts;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20240915162255_m89")]
-    partial class m89
+    [Migration("20240919055806_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -299,6 +299,9 @@ namespace Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
 
@@ -355,7 +358,7 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "06dc5b17-828d-4666-befb-ad713daf14b2",
+                            ConcurrencyStamp = "8869365a-6af7-493e-8c75-8dd3825cc3f2",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user1",
                             EmailConfirmed = true,
@@ -364,9 +367,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1",
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEH380dcK6YFWCN7GAljDgkIRM2Nrr8hg78fogcQxHCXRwtd9Io6cvePutglpiSoSjg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEJXFW0eoEBUUE9xmknVZ3APlblMYKtiuZGrOHLWOr+xdKFw73rjpwcTavHNWz75eQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "64adba8a-bd24-4662-96e1-6345b5661f96",
+                            SecurityStamp = "4f92cb1b-2058-4eb1-979a-c2bb2df66e12",
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -374,7 +377,7 @@ namespace Persistence.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a968441d-8369-474c-a87f-2f85f8d446f0",
+                            ConcurrencyStamp = "f3b44267-f074-4983-9c95-6dfb2b0ba8e7",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user2",
                             EmailConfirmed = true,
@@ -383,9 +386,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2",
                             NormalizedUserName = "USER2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEK9crnir2M0axPlu7MclPBzW6qdHw8lhmJ7/SZI8Sf2SCeZn4EYxf5hzsK7BwMzLNA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJd61UIiN+BYc2SsOVromxWkuV/UaCbYOGWHrJ27vCzuOqKKD79v/H5ntfj1W4Gsfw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "619eea9a-70a1-4b6b-9272-17a125af23a8",
+                            SecurityStamp = "b9a43add-d06c-4238-b8b5-d39d162a0198",
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -393,7 +396,7 @@ namespace Persistence.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "61fd1185-7c35-4b60-92c4-4288ee218732",
+                            ConcurrencyStamp = "5fc3e72d-8c57-4906-a8d7-383439b9c504",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user3",
                             EmailConfirmed = true,
@@ -402,9 +405,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3",
                             NormalizedUserName = "USER3",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDyhFOeLHSsHm00+1mM5biUPKCIFkYIrsVO4vueIff/9HQvtvMNj1gi2klGSyhnYWg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECSrWKEBcGUz18PBioxopfNYiTCpMvjQe85sMtauyzbiff/Ol0BMaFgoGi4rNAzCEw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a42a6094-8961-4e7c-8bee-b65f1730d0e2",
+                            SecurityStamp = "7b6d4932-7118-444c-a910-4ab0e727e23e",
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         });

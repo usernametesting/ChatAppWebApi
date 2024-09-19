@@ -355,7 +355,7 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4e2883b8-bc71-431c-b669-300182cbc460",
+                            ConcurrencyStamp = "8869365a-6af7-493e-8c75-8dd3825cc3f2",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user1",
                             EmailConfirmed = true,
@@ -364,9 +364,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1",
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAIAAYagAAAAECRF9N2Z+wmpM0r03lsHFB56SodhIJ14gQvJx+/+YUmVaoBRHxB/19TSJ8UHJaDdYA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEJXFW0eoEBUUE9xmknVZ3APlblMYKtiuZGrOHLWOr+xdKFw73rjpwcTavHNWz75eQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "183ccdaf-e390-4fbd-8eb8-6474e3fba3bc",
+                            SecurityStamp = "4f92cb1b-2058-4eb1-979a-c2bb2df66e12",
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -374,7 +374,7 @@ namespace Persistence.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bbac2b7f-8077-4069-b483-9ff328ec9362",
+                            ConcurrencyStamp = "f3b44267-f074-4983-9c95-6dfb2b0ba8e7",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user2",
                             EmailConfirmed = true,
@@ -383,9 +383,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2",
                             NormalizedUserName = "USER2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAncOHB1A9fFzQT03Z3mo4CJvwjxYVq6wmmY/Z7Opbr9E+tqLQJJc/eOMs49Aqohag==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJd61UIiN+BYc2SsOVromxWkuV/UaCbYOGWHrJ27vCzuOqKKD79v/H5ntfj1W4Gsfw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a91da54e-a2d2-45b2-998e-78e58579eb2b",
+                            SecurityStamp = "b9a43add-d06c-4238-b8b5-d39d162a0198",
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -393,7 +393,7 @@ namespace Persistence.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "27a94c09-450c-4dba-b0ae-615e6d64b9cf",
+                            ConcurrencyStamp = "5fc3e72d-8c57-4906-a8d7-383439b9c504",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user3",
                             EmailConfirmed = true,
@@ -402,9 +402,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3",
                             NormalizedUserName = "USER3",
-                            PasswordHash = "AQAAAAIAAYagAAAAECquAZZNGQvc09eoplqdFGFrh9JtvzGanpGL2wHpaSQIn5oIKIbDg6qX81JAgd2U0Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECSrWKEBcGUz18PBioxopfNYiTCpMvjQe85sMtauyzbiff/Ol0BMaFgoGi4rNAzCEw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1898f4ce-63a6-4c1c-a805-80197981bed5",
+                            SecurityStamp = "7b6d4932-7118-444c-a910-4ab0e727e23e",
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         });

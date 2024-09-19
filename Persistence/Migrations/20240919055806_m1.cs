@@ -42,6 +42,7 @@ namespace Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ConnectionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsOnline = table.Column<bool>(type: "bit", nullable: false),
                     LastActivityDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -267,12 +268,12 @@ namespace Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OnFocusUserId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OnFocusUserId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfImageUrl", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "483eb92a-52e5-4eaa-99cc-45da81f78d90", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", null, "AQAAAAIAAYagAAAAEHtZHuleNDmTDXc5Du88qptCCJA80jvpSfysP7juvKAX7pN9KgPpjdgfpo529xEYwg==", null, false, null, null, "2455c13f-c6a0-48ce-9c03-a91d240b68f1", false, null, "user1" },
-                    { 2, 0, "e44f394f-6058-4c34-8f7e-9fa14e046bc7", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", null, "AQAAAAIAAYagAAAAECI86MkVT+s3TIrPVHKepgCqPFfnxLvc5vaY9jf/oKwYpdHUg+GNspHa1uzsNb4GDw==", null, false, null, null, "60bf6a12-c933-4df9-9dc0-54871ef6cb6b", false, null, "user2" },
-                    { 3, 0, "27235aee-b5ed-4590-88de-875e4f4da9c7", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", null, "AQAAAAIAAYagAAAAEITAA5lVW9z2Urn+9cWHNKFKS4PdH+dvl2W29FeKGp7n0mo+45BrTBtBMpGRb/BMag==", null, false, null, null, "409ff7ac-2846-4853-bd1e-73ab10767adb", false, null, "user3" }
+                    { 1, 0, "8869365a-6af7-493e-8c75-8dd3825cc3f2", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", null, "AQAAAAIAAYagAAAAEEJXFW0eoEBUUE9xmknVZ3APlblMYKtiuZGrOHLWOr+xdKFw73rjpwcTavHNWz75eQ==", null, false, null, null, null, "4f92cb1b-2058-4eb1-979a-c2bb2df66e12", false, null, "user1" },
+                    { 2, 0, "f3b44267-f074-4983-9c95-6dfb2b0ba8e7", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", null, "AQAAAAIAAYagAAAAEJd61UIiN+BYc2SsOVromxWkuV/UaCbYOGWHrJ27vCzuOqKKD79v/H5ntfj1W4Gsfw==", null, false, null, null, null, "b9a43add-d06c-4238-b8b5-d39d162a0198", false, null, "user2" },
+                    { 3, 0, "5fc3e72d-8c57-4906-a8d7-383439b9c504", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", null, "AQAAAAIAAYagAAAAECSrWKEBcGUz18PBioxopfNYiTCpMvjQe85sMtauyzbiff/Ol0BMaFgoGi4rNAzCEw==", null, false, null, null, null, "7b6d4932-7118-444c-a910-4ab0e727e23e", false, null, "user3" }
                 });
 
             migrationBuilder.InsertData(

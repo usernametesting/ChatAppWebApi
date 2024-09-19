@@ -5,6 +5,7 @@ using ChatApis.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 
 namespace ChatApis.Controllers;
@@ -81,9 +82,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    public async Task<IActionResult> PostFile(MessageDTO model)
+    public async Task<IActionResult> PostFile([FromForm] IFormFile file, [FromForm] string message)
     {
-        var result = await _messageService.PostFile(model);
+        var result = await _messageService.PostFile(file,message);
         return await _httpResult.Result(result);
     }
 

@@ -8,7 +8,7 @@ public interface IMessageService
 {
     Task<ServiceResult> ChangeMessageStateAsync(int userId);
     Task<ServiceResult> PostMessageToUserAsync(MessageDTO model);
-    Task<ServiceResult> PostFile(MessageDTO model);
+    Task<ServiceResult> PostFile(IFormFile file,string message);
 
 
 }

@@ -1,12 +1,14 @@
 ﻿using Application.Abstractions.HubServices;
 using Application.Abstractions.Services;
 using Application.Abstractions.Services.ExternalServices;
+using Application.Abstractions.Services.SignalRServices;
 using Application.DTOs;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.Common;
 using Application.DTOs.Common.Bases;
 using Application.DTOs.ExternalServiceDTOs;
 using Application.DTOs.Tokens;
+using Application.Helpers.Users;
 using Application.UnitOfWorks;
 using Domain.Entities.Identity;
 using ETicaretAPI.Domain.Entities.Identity;
@@ -32,7 +34,11 @@ public class AuthService : IAuthService
     private readonly ITokenHandler _tokenHandler;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUnitOfWork _unitOfWork;
-    public AuthService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService, IAutoMapperConfiguration mapper, ProductDbContext productDbContext, INotificationHubService notifyService, ITokenHandler tokenHandler, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
+    private readonly IHubConnectionsHandler _hubConnectionsHandler;
+    private readonly IUserHelper _helper;
+
+
+    public AuthService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService, IAutoMapperConfiguration mapper, ProductDbContext productDbContext, INotificationHubService notifyService, ITokenHandler tokenHandler, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IHubConnectionsHandler hubConnectionsHandler, IUserHelper helper)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -43,23 +49,15 @@ public class AuthService : IAuthService
         _tokenHandler = tokenHandler;
         _httpContextAccessor = httpContextAccessor;
         _unitOfWork = unitOfWork;
+        _hubConnectionsHandler = hubConnectionsHandler;
+        _helper = helper;
     }
 
 
 
     public async Task<IServiceResult> LoginAsync(LoginUserDTO model)
     {
-        var f = _httpContextAccessor.HttpContext;
-        AppUser user;
-        try
-        {
-            user = await _userManager.FindByEmailAsync(model.Email);
-        }
-        catch (Exception e)
-        {
-
-            throw;
-        }
+        AppUser user = await _userManager?.FindByEmailAsync(model.Email)!;
 
         if (user == null)
             return new ServiceResult()
@@ -80,12 +78,22 @@ public class AuthService : IAuthService
                 Success = false,
             };
         }
+
+
+        if (user.IsOnline)
+            return new ServiceResult()
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Message = "user already login",
+                Success = false,
+            };
+
         var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: false, lockoutOnFailure: false);
         if (!result.Succeeded)
         {
             return new ServiceResult()
             {
-                StatusCode = HttpStatusCode.Unauthorized,
+                StatusCode = HttpStatusCode.OK,
                 Message = "Invalid password",
                 Success = false,
             };
@@ -97,7 +105,7 @@ public class AuthService : IAuthService
               .GetAllAsQueryableAsync()).FirstOrDefault(token => token.UserId == user.Id);
 
         if (refreshToken is null)
-            await _unitOfWork.GetWriteRepository<AppUserToken,int>().AddAsync(new AppUserToken()
+            await _unitOfWork.GetWriteRepository<AppUserToken, int>().AddAsync(new AppUserToken()
             {
                 CreatedDate = DateTime.UtcNow,
                 LoginProvider = "Default",
@@ -124,9 +132,9 @@ public class AuthService : IAuthService
 
     }
 
-    private async Task CreateOrUpdateRefreshToken(AppUser user,string token)
+    private async Task CreateOrUpdateRefreshToken(AppUser user, string token)
     {
-        var refreshToken = (await _unitOfWork.GetReadRepository<AppUserToken,int>()
+        var refreshToken = (await _unitOfWork.GetReadRepository<AppUserToken, int>()
                 .GetAllAsQueryableAsync()).FirstOrDefault(token => token.UserId == user.Id);
 
         if (refreshToken is null)
@@ -154,11 +162,11 @@ public class AuthService : IAuthService
         await _mailService.SendMail(new SendMailDTO()
         {
             Email = user.Email,
-            CallBackUrl = $"http://localhost:5205/Account/ConfirmGmail?id={user.Id}&token={WebUtility.UrlEncode(emailConfirmToken)}"
+            CallBackUrl = $"https://192.168.100.9:7293/api/Account/ConfirmGmail?id={user.Id}&token={WebUtility.UrlEncode(emailConfirmToken)}"
         });
     }
 
-  
+
 
     public async Task<ServiceResult> RegisterAsync(CreateUserDTO model)
     {
@@ -167,7 +175,7 @@ public class AuthService : IAuthService
         if (user is not null)
             return new()
             {
-                StatusCode = HttpStatusCode.AlreadyReported,
+                StatusCode = HttpStatusCode.OK,
                 Success = false,
                 Message = "user already exsists"
             };
@@ -208,7 +216,7 @@ public class AuthService : IAuthService
     public async Task<ServiceResult> ConfirmEmailAsync(int id, string token)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
-        var result = await _userManager.ConfirmEmailAsync(user, WebUtility.UrlDecode(token));
+        var result = await _userManager.ConfirmEmailAsync(user, token);
 
         if (result.Succeeded)
             return new()
@@ -229,8 +237,8 @@ public class AuthService : IAuthService
     public async Task<IServiceResult> RefrehTokenAsync(RefreshTokenDTO refreshToken)
     {
         var user = await (await _unitOfWork.GetReadRepository<AppUser, int>().GetAllAsQueryableAsync())
-                                        .FirstOrDefaultAsync(u=>u.UserTokens!.Any(t=>t.Value==refreshToken.RefreshToken));
-        
+                                        .FirstOrDefaultAsync(u => u.UserTokens!.Any(t => t.Value == refreshToken.RefreshToken));
+
         var token = user?.UserTokens?.FirstOrDefault(t => t.Value == refreshToken.RefreshToken);
         if (token is null)
             return new ServiceResult()
@@ -248,7 +256,7 @@ public class AuthService : IAuthService
             };
 
         var newToken = _tokenHandler.CreateAccessToken(user!);
-        await CreateOrUpdateRefreshToken(user,newToken.RefreshToken);
+        await CreateOrUpdateRefreshToken(user, newToken.RefreshToken);
         return new ServiceResult<Token>()
         {
             Message = "user token updated",
@@ -256,6 +264,26 @@ public class AuthService : IAuthService
             Success = true,
             resultObj = newToken
         };
-       
+
+    }
+
+    public async Task<ServiceResult> Logut()
+    {
+        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetCurrentlyUserId());
+        user.ConnectionId = null;
+        user.IsOnline = false;
+
+        user.LastActivityDate = DateTime.UtcNow.ToLocalTime().ToString("HH:mm:ss") + " PM";
+        await _unitOfWork.Commit();
+
+        await _hubConnectionsHandler.OnLogOut(user.Id.ToString());
+        return new ServiceResult()
+        {
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK,
+        };
+     
+
     }
 }

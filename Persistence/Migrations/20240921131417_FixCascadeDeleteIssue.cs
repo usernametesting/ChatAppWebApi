@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m1 : Migration
+    public partial class FixCascadeDeleteIssue : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,6 +44,7 @@ namespace Persistence.Migrations
                     ConnectionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProfImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsOnline = table.Column<bool>(type: "bit", nullable: false),
+                    Biografy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastActivityDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     OnFocusUserId = table.Column<int>(type: "int", nullable: true),
@@ -91,6 +92,34 @@ namespace Persistence.Migrations
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contacts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ContactUserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contacts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contacts_Users_ContactUserId",
+                        column: x => x.ContactUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Contacts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -268,18 +297,28 @@ namespace Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OnFocusUserId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfImageUrl", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "Biografy", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OnFocusUserId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfImageUrl", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "8869365a-6af7-493e-8c75-8dd3825cc3f2", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", null, "AQAAAAIAAYagAAAAEEJXFW0eoEBUUE9xmknVZ3APlblMYKtiuZGrOHLWOr+xdKFw73rjpwcTavHNWz75eQ==", null, false, null, null, null, "4f92cb1b-2058-4eb1-979a-c2bb2df66e12", false, null, "user1" },
-                    { 2, 0, "f3b44267-f074-4983-9c95-6dfb2b0ba8e7", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", null, "AQAAAAIAAYagAAAAEJd61UIiN+BYc2SsOVromxWkuV/UaCbYOGWHrJ27vCzuOqKKD79v/H5ntfj1W4Gsfw==", null, false, null, null, null, "b9a43add-d06c-4238-b8b5-d39d162a0198", false, null, "user2" },
-                    { 3, 0, "5fc3e72d-8c57-4906-a8d7-383439b9c504", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", null, "AQAAAAIAAYagAAAAECSrWKEBcGUz18PBioxopfNYiTCpMvjQe85sMtauyzbiff/Ol0BMaFgoGi4rNAzCEw==", null, false, null, null, null, "7b6d4932-7118-444c-a910-4ab0e727e23e", false, null, "user3" }
+                    { 1, 0, null, "4587fe6d-6cc2-4741-a8cf-43ef24db3074", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", null, "AQAAAAIAAYagAAAAEADNwcub5adlDQBFtTUebW0v6x9gctULspuV6a3igGAOVdJFN5EdumMufboKTcoBFA==", null, false, null, null, null, "3d39de2f-5e67-45b3-967e-bdeef48d2c49", false, null, "user1" },
+                    { 2, 0, null, "1a22adbe-5ed3-4d09-9c70-62ab4b96bb40", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", null, "AQAAAAIAAYagAAAAEO2h9AGNyIqI1erVCx4FafInENNTObh/WRyUnAv2hAFLojdnr7xN4CZq7BStd3pXJw==", null, false, null, null, null, "d334053d-d9b4-40ae-aad1-fb3728895e04", false, null, "user2" },
+                    { 3, 0, null, "746ad7c1-28fc-4385-827c-11caaf934e1b", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", null, "AQAAAAIAAYagAAAAEOMuq4uDZ6Qz0H55SaeI4vIOIfAR8OysG0Q8MAA3TC9+cMgHQiF1jXicM4RRTrRzMw==", null, false, null, null, null, "61ae8534-0ce7-45a5-b365-b5db3886a5dc", false, null, "user3" }
                 });
 
             migrationBuilder.InsertData(
                 table: "UsersRoles",
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[] { 1, 1 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contacts_ContactUserId",
+                table: "Contacts",
+                column: "ContactUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contacts_UserId",
+                table: "Contacts",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LastViewedUser_UserId",
@@ -393,6 +432,9 @@ namespace Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Contacts");
+
             migrationBuilder.DropTable(
                 name: "LastViewedUser");
 

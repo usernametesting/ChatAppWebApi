@@ -21,42 +21,81 @@ public class UserReadRepository : GenericReadRepository<AppUser, int>, IUserRead
 
     }
 
-    public async Task<List<UserDTO>> GetUsersWithMessages(int senderId)
+    public async Task<UserDTO> GetUserByIdAsync(int senderId, int userId)
     {
         var userWithMessages = await _entity
-       .Where(user=>user.Id!=senderId)
+       .Where(user => user.Id == userId)
       .Select(u => new
       {
           User = new UserDTO
           {
               Id = u.Id,
               UserName = u.UserName,
-              IsOnline  = u.IsOnline,
-              LastActivityDate = u.LastActivityDate ??  "never signed",
+              IsOnline = u.IsOnline,
+              LastActivityDate = u.LastActivityDate ?? "never signed",
               ProfImageUrl = u.ProfImageUrl,
               Messages = _context.UsersMessages
-                  .Where(um => (um.FromUserId == u.Id && um.ToUserId==senderId)||( um.ToUserId == u.Id && um.FromUserId==senderId))
+                  .Where(um => (um.FromUserId == u.Id && um.ToUserId == senderId) || (um.ToUserId == u.Id && um.FromUserId == senderId))
                   .Select(um => new MessageDTO
                   {
                       Message = um.Message.Content,
                       MessageType = um.Message.MessageType,
                       CreatedDate = um.CreatedDate,
-                      IsSender = (senderId==um.FromUserId),
+                      IsSender = (senderId == um.FromUserId),
                       State = um.Message.State
-                      
+
                   })
-                  .OrderBy(m => m.CreatedDate)  
+                  .OrderBy(m => m.CreatedDate)
                   .ToList(),
               UnreadMessageCount = _context.UsersMessages
-                .Where(um => um.FromUserId == u.Id && um.ToUserId == senderId && um.Message.State!=MessageState.SEEN)
+                .Where(um => um.FromUserId == u.Id && um.ToUserId == senderId && um.Message.State != MessageState.SEEN)
+                .Count()
+          },
+      })
+      .Select(u => u.User)
+      .FirstOrDefaultAsync();
+
+        return userWithMessages;
+    }
+
+    public async Task<List<UserDTO>> GetUsersWithMessages(int senderId)
+    {
+        var userWithMessages = await _entity
+       .Where(user => user.Id != senderId)
+      .Select(u => new
+      {
+          User = new UserDTO
+          {
+              Id = u.Id,
+              IsMutualFriendship = (u.Contacts!.Any(c => c.ContactUserId == senderId)),
+              UserName = u.UserName,
+              IsOnline = u.IsOnline,
+              LastActivityDate = u.LastActivityDate ?? "never signed",
+              ProfImageUrl = u.ProfImageUrl,
+              Messages = _context.UsersMessages
+                  .Where(um => (um.FromUserId == u.Id && um.ToUserId == senderId) || (um.ToUserId == u.Id && um.FromUserId == senderId))
+                  .Select(um => new MessageDTO
+                  {
+                      Message = um.Message.Content,
+                      MessageType = um.Message.MessageType,
+                      CreatedDate = um.CreatedDate,
+                      IsSender = (senderId == um.FromUserId),
+                      State = um.Message.State
+
+                  })
+                  .OrderBy(m => m.CreatedDate)
+                  .ToList(),
+              UnreadMessageCount = _context.UsersMessages
+                .Where(um => um.FromUserId == u.Id && um.ToUserId == senderId && um.Message.State != MessageState.SEEN)
                 .Count()
           },
           LastMessageDate = _context.UsersMessages
               .Where(um => um.FromUserId == u.Id || um.ToUserId == u.Id)
-              .Max(um => (DateTime?)um.CreatedDate)  
+              .Max(um => (DateTime?)um.CreatedDate)
       })
-      .OrderByDescending(u => u.LastMessageDate)  
-      .Select(u => u.User)  
+      .OrderByDescending(u => u.LastMessageDate)
+      .Select(u => u.User)
+      .Where(u => u.Messages!.Count != 0)
       .ToListAsync();
 
         return userWithMessages;

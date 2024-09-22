@@ -38,6 +38,10 @@ public class HubConnectionsHandler : IHubConnectionsHandler
         await SendAll("UserDisconnected", result.resultObj!);
     }
 
+
+    public async Task OnLogOut(string userId) =>
+        await SendAll("UserDisconnected", userId);
+
     private async Task SendAll(string method, string param) =>
             await hub.Clients.All.SendAsync(method, param);
 
@@ -60,5 +64,7 @@ public class HubConnectionsHandler : IHubConnectionsHandler
             await hub.Clients.AllExcept(currentConnectionId).SendAsync("OnUserFocusDisconnectedToMe", userId);
 
     }
+    public async Task OnHasChanges(string connectionId, int userId) =>
+            await hub.Clients.AllExcept(connectionId).SendAsync("OnHasChanges", userId);
 }
 

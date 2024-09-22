@@ -79,6 +79,7 @@ public class ProductDbContext : IdentityDbContext<AppUser, AppRole, int,
 
     public virtual DbSet<UsersMessages> UsersMessages { get; set; }
     public virtual DbSet<Message> Messages { get; set; }
+    public virtual DbSet<Contact> Contacts{ get; set; }
 
 
 

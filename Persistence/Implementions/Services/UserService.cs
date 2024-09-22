@@ -4,6 +4,7 @@ using Application.Abstractions.Services.ExternalServices;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.Common;
 using Application.DTOs.SignalRDTOs;
+using Application.DTOs.Statuses;
 using Application.DTOs.UsersDTOs;
 using Application.Helpers.Users;
 using Application.Repositories.Users;
@@ -14,20 +15,23 @@ using ETicaretAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SignalR.Implementions.Services;
 using System.Collections;
 using System.Data;
 using System.Net;
+using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 
 
 namespace Persistence.Implementions.Services;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IGCService _gcService;
     private readonly IUserHelper _helper;
     private readonly IAutoMapperConfiguration _mapper;
     private readonly RoleManager<AppRole> _roleManager;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IGCService _gcService;
     private readonly IUserReadrepository<AppUser, int> userRepo;
 
 
@@ -44,21 +48,34 @@ public class UserService : IUserService
         _gcService = gcService;
     }
 
-    public async Task<ServiceResult<string>> ChangeUserImageAsync(IFormFile formFile)
+    public async Task<ServiceResult> AddContactAsync(string email)
     {
-        var url = await _gcService.UploadFileAsync(formFile, formFile.FileName);
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+            return new ServiceResult
+            {
+                StatusCode = HttpStatusCode.OK,
+                Success = false,
+                Message = "user does't exsists"
+            };
 
         var currentlyUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetCurrentlyUserId());
 
-        currentlyUser.ProfImageUrl = url;
+        currentlyUser?.Contacts?.Add(new()
+        {
+            ContactUser = user,
+        });
 
         await _unitOfWork.Commit();
-        return new ServiceResult<string>
+
+        return new ServiceResult
         {
+            StatusCode = HttpStatusCode.Created,
             Success = true,
-            Message = "succsess",
-            StatusCode = HttpStatusCode.OK
+            Message = "contact succsessfully added"
         };
+
     }
 
     public async Task<ServiceResult> Delete(int Id)
@@ -158,12 +175,26 @@ public class UserService : IUserService
     {
         var currenltyUserId = _helper.GetCurrentlyUserId();
         var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(currenltyUserId);
+
         return new ServiceResult<CurrentlyUser>
         {
             Success = true,
             Message = "succsess",
             StatusCode = HttpStatusCode.OK,
             resultObj = _mapper.Map<CurrentlyUser, AppUser>(user)
+        };
+    }
+
+    public async Task<ServiceResult<UserDTO>> GetUserByIdAsync(int userId)
+    {
+        var senderId = _helper.GetCurrentlyUserId();
+        var messages = await userRepo.GetUserByIdAsync(int.Parse(senderId.ToString()), userId);
+
+        return new ServiceResult<UserDTO>
+        {
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK,
         };
     }
 
@@ -334,5 +365,31 @@ public class UserService : IUserService
             resultObj = user.Id.ToString()
         };
     }
+    public async Task<ServiceResult> PostStatus(IFormFile file, string status)
+    {
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
+        var model = JsonSerializer.Deserialize<StatusDTO>(status, options);
+        var url = await _gcService.UploadFileAsync(file, file.FileName);
+
+        var currentlyUser =  await _unitOfWork.GetReadRepository<AppUser,int>().GetByIdAsync(_helper.GetCurrentlyUserId());
+        currentlyUser?.Statuses?.Add(new()
+        {
+            StatusType = model!.StatusType,
+            MediaUrl = url,
+        });
+
+        await _unitOfWork.Commit();
+        await hubConnectionsHandler.SendMessage(model, toUser.ConnectionId!);
+
+        return new ServiceResult()
+        {
+            Success = true,
+            Message = "succsess",
+            StatusCode = HttpStatusCode.OK,
+        };
+    }
 }

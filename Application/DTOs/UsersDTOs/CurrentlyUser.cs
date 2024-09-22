@@ -1,4 +1,6 @@
-﻿namespace Application.DTOs.UsersDTOs;
+﻿using Domain.Entities.ConcretEntities;
+
+namespace Application.DTOs.UsersDTOs;
 
 public class CurrentlyUser
 {
@@ -7,4 +9,6 @@ public class CurrentlyUser
     public bool IsOnline { get; set; }
     public string? LastActivityDate { get; set; }
     public string? ProfImageUrl{ get; set; }
+
+    public List<Contact> ?Contacts { get; set; }
 }

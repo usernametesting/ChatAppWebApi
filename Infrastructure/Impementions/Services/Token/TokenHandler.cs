@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Tokens;
 using Domain.Entities;
 using ETicaretAPI.Domain.Entities.Identity;
+using Google.Api.Gax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -31,7 +32,9 @@ public class TokenHandler : ITokenHandler
 
         SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-        token.Expiration = DateTime.Now.AddDays(1);
+        token.Expiration = DateTime.Now.AddMinutes(15);
+        //token.Expiration = DateTime.Now.AddSeconds(10);
+        Console.WriteLine(token.Expiration);
 
         JwtSecurityToken securityToken = new(
             audience: _configuration["Token:Audience"],

@@ -20,4 +20,6 @@ public interface IAuthService : IExternalAuthService, IInternalAuthService
     Task<ServiceResult> RegisterAsync(CreateUserDTO model);
 
     Task<ServiceResult> ConfirmEmailAsync(int id,string token);
+    Task<ServiceResult> Logut();
+
 }

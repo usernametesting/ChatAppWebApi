@@ -10,5 +10,4 @@ public interface IMessageService
     Task<ServiceResult> PostMessageToUserAsync(MessageDTO model);
     Task<ServiceResult> PostFile(IFormFile file,string message);
 
-
 }

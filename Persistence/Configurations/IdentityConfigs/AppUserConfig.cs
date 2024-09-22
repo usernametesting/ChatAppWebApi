@@ -26,6 +26,10 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .WithOne(ur => ur.User)
             .HasForeignKey(ur => ur.UserId);
 
+        builder.HasMany(u => u.Contacts)
+            .WithOne(c => c.User)
+            .HasForeignKey(c => c.UserId);
+
         builder.HasIndex(u => u.NormalizedUserName).IsUnique(false);
         builder.HasIndex(u => u.NormalizedEmail).IsUnique(false);
         builder.HasIndex(u => u.Email).IsUnique(false);

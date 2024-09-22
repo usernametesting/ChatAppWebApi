@@ -16,14 +16,18 @@ namespace Application.Abstractions.Services.ControllerServices;
 public interface IUserService
 {
     Task<ServiceResult<List<AppUser>>> GetAllAsync();
-    Task<ServiceResult<List<AppUser>>> GetAllDataAsync ();
+    Task<ServiceResult<List<AppUser>>> GetAllDataAsync();
     Task<ServiceResult<UpdateUserDTO>> GetByIdAsync(int id);
     Task<ServiceResult<CurrentlyUser>> GetCurrentlyUserAsync();
-    Task<ServiceResult<string>> UpdateMessageStateOnConnectedAsync(string connectionId);
-    Task<ServiceResult<string>> UpdateUserStateOnDisconnectAsync();
-    Task<ServiceResult<string>> ChangeUserImageAsync(IFormFile formFile);
 
     Task<ServiceResult<List<UserDTO>>> GetUsersWithMessagesAsync();
+    Task<ServiceResult<UserDTO>> GetUserByIdAsync(int UserId);
+
+    Task<ServiceResult<string>> UpdateMessageStateOnConnectedAsync(string connectionId);
+    Task<ServiceResult<string>> UpdateUserStateOnDisconnectAsync();
+
+    Task<ServiceResult> AddContactAsync(string email);
+    Task<ServiceResult> PostStatus(IFormFile file, string message);
 
 
     Task<ServiceResult> Delete(int Id);

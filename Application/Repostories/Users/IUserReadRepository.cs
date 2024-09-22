@@ -10,5 +10,6 @@ public interface IUserReadrepository<TEntity, TKey>
     : IGenericReadRepository<TEntity,TKey> where TEntity : IBaseEntity<TKey>
 {
     Task<List<UserDTO>> GetUsersWithMessages(int senderId);
+    Task<UserDTO> GetUserByIdAsync(int senderId, int userId);
 
 }

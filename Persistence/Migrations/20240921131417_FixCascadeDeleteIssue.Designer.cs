@@ -12,8 +12,8 @@ using Persistence.DbContexts;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20240919055806_m1")]
-    partial class m1
+    [Migration("20240921131417_FixCascadeDeleteIssue")]
+    partial class FixCascadeDeleteIssue
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,35 @@ namespace Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Entities.ConcretEntities.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContactUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Contacts");
+                });
 
             modelBuilder.Entity("Domain.Entities.ConcretEntities.LastViewedUser", b =>
                 {
@@ -247,6 +276,9 @@ namespace Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Biografy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -358,7 +390,7 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8869365a-6af7-493e-8c75-8dd3825cc3f2",
+                            ConcurrencyStamp = "4587fe6d-6cc2-4741-a8cf-43ef24db3074",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user1",
                             EmailConfirmed = true,
@@ -367,9 +399,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1",
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEJXFW0eoEBUUE9xmknVZ3APlblMYKtiuZGrOHLWOr+xdKFw73rjpwcTavHNWz75eQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEADNwcub5adlDQBFtTUebW0v6x9gctULspuV6a3igGAOVdJFN5EdumMufboKTcoBFA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4f92cb1b-2058-4eb1-979a-c2bb2df66e12",
+                            SecurityStamp = "3d39de2f-5e67-45b3-967e-bdeef48d2c49",
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -377,7 +409,7 @@ namespace Persistence.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f3b44267-f074-4983-9c95-6dfb2b0ba8e7",
+                            ConcurrencyStamp = "1a22adbe-5ed3-4d09-9c70-62ab4b96bb40",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user2",
                             EmailConfirmed = true,
@@ -386,9 +418,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2",
                             NormalizedUserName = "USER2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJd61UIiN+BYc2SsOVromxWkuV/UaCbYOGWHrJ27vCzuOqKKD79v/H5ntfj1W4Gsfw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEO2h9AGNyIqI1erVCx4FafInENNTObh/WRyUnAv2hAFLojdnr7xN4CZq7BStd3pXJw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b9a43add-d06c-4238-b8b5-d39d162a0198",
+                            SecurityStamp = "d334053d-d9b4-40ae-aad1-fb3728895e04",
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -396,7 +428,7 @@ namespace Persistence.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5fc3e72d-8c57-4906-a8d7-383439b9c504",
+                            ConcurrencyStamp = "746ad7c1-28fc-4385-827c-11caaf934e1b",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user3",
                             EmailConfirmed = true,
@@ -405,9 +437,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3",
                             NormalizedUserName = "USER3",
-                            PasswordHash = "AQAAAAIAAYagAAAAECSrWKEBcGUz18PBioxopfNYiTCpMvjQe85sMtauyzbiff/Ol0BMaFgoGi4rNAzCEw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOMuq4uDZ6Qz0H55SaeI4vIOIfAR8OysG0Q8MAA3TC9+cMgHQiF1jXicM4RRTrRzMw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7b6d4932-7118-444c-a910-4ab0e727e23e",
+                            SecurityStamp = "61ae8534-0ce7-45a5-b365-b5db3886a5dc",
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         });
@@ -480,6 +512,25 @@ namespace Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.ConcretEntities.Contact", b =>
+                {
+                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "ContactUser")
+                        .WithMany()
+                        .HasForeignKey("ContactUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ETicaretAPI.Domain.Entities.Identity.AppUser", "User")
+                        .WithMany("Contacts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ContactUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.ConcretEntities.LastViewedUser", b =>
@@ -600,6 +651,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Identity.AppUser", b =>
                 {
+                    b.Navigation("Contacts");
+
                     b.Navigation("Messages");
 
                     b.Navigation("UserRoles");

@@ -365,31 +365,5 @@ public class UserService : IUserService
             resultObj = user.Id.ToString()
         };
     }
-    public async Task<ServiceResult> PostStatus(IFormFile file, string status)
-    {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
-        var model = JsonSerializer.Deserialize<StatusDTO>(status, options);
-        var url = await _gcService.UploadFileAsync(file, file.FileName);
-
-        var currentlyUser =  await _unitOfWork.GetReadRepository<AppUser,int>().GetByIdAsync(_helper.GetCurrentlyUserId());
-        currentlyUser?.Statuses?.Add(new()
-        {
-            StatusType = model!.StatusType,
-            MediaUrl = url,
-        });
-
-        await _unitOfWork.Commit();
-        await hubConnectionsHandler.SendMessage(model, toUser.ConnectionId!);
-
-        return new ServiceResult()
-        {
-            Success = true,
-            Message = "succsess",
-            StatusCode = HttpStatusCode.OK,
-        };
-    }
+  
 }

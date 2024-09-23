@@ -14,5 +14,5 @@ public class Status : BaseEntity<int>, IBaseEntity<int>
     public string? Decription { get; set; }
 
     public int UserId { get; set; }
-    public AppUser User { get; set; }
+    public virtual AppUser User { get; set; }
 }

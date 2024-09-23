@@ -27,7 +27,6 @@ public interface IUserService
     Task<ServiceResult<string>> UpdateUserStateOnDisconnectAsync();
 
     Task<ServiceResult> AddContactAsync(string email);
-    Task<ServiceResult> PostStatus(IFormFile file, string message);
 
 
     Task<ServiceResult> Delete(int Id);

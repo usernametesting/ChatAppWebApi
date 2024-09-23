@@ -1,6 +1,10 @@
-﻿namespace Application.Abstractions.Services.ControllerServices;
+﻿using Application.DTOs.Common;
+using Microsoft.AspNetCore.Http;
+
+namespace Application.Abstractions.Services.ControllerServices;
 
 public  interface IStatusService
 {
+    Task<ServiceResult> PostStatus(IFormFile file, string message);
 
 }

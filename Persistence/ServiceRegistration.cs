@@ -48,6 +48,7 @@ public static class ServiceRegistration
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IFileUploadService,FileUploadService>();
         services.AddScoped<IUserReadrepository<AppUser, int>, UserReadRepository>();
+        services.AddScoped<IStatusService,StatusService>();
 
 
         services.Configure<IdentityOptions>(options =>

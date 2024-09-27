@@ -16,4 +16,5 @@ public class UserDTO
     public string? Email { get; set; }
 
     public List<MessageDTO>? Messages { get; set; }
+    public List<Status> ? Statuses { get; set; }
 }

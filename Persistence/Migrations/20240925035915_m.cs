@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FixCascadeDeleteIssue : Migration
+    public partial class m : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -139,6 +139,30 @@ namespace Persistence.Migrations
                     table.PrimaryKey("PK_LastViewedUser", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LastViewedUser_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Status",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StatusType = table.Column<int>(type: "int", nullable: false),
+                    MediaUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Decription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Status", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Status_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -300,9 +324,9 @@ namespace Persistence.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Biografy", "ConcurrencyStamp", "ConnectionId", "CreatedDate", "Email", "EmailConfirmed", "IsDeleted", "IsOnline", "LastActivityDate", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OnFocusUserId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfImageUrl", "RefreshToken", "RefreshTokenEndDate", "SecurityStamp", "TwoFactorEnabled", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, null, "4587fe6d-6cc2-4741-a8cf-43ef24db3074", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", null, "AQAAAAIAAYagAAAAEADNwcub5adlDQBFtTUebW0v6x9gctULspuV6a3igGAOVdJFN5EdumMufboKTcoBFA==", null, false, null, null, null, "3d39de2f-5e67-45b3-967e-bdeef48d2c49", false, null, "user1" },
-                    { 2, 0, null, "1a22adbe-5ed3-4d09-9c70-62ab4b96bb40", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", null, "AQAAAAIAAYagAAAAEO2h9AGNyIqI1erVCx4FafInENNTObh/WRyUnAv2hAFLojdnr7xN4CZq7BStd3pXJw==", null, false, null, null, null, "d334053d-d9b4-40ae-aad1-fb3728895e04", false, null, "user2" },
-                    { 3, 0, null, "746ad7c1-28fc-4385-827c-11caaf934e1b", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", null, "AQAAAAIAAYagAAAAEOMuq4uDZ6Qz0H55SaeI4vIOIfAR8OysG0Q8MAA3TC9+cMgHQiF1jXicM4RRTrRzMw==", null, false, null, null, null, "61ae8534-0ce7-45a5-b365-b5db3886a5dc", false, null, "user3" }
+                    { 1, 0, null, "608f6d5c-e8e1-4196-9511-fbc2e3ead4f6", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user1", true, false, false, null, false, null, "USER1", "USER1", null, "AQAAAAIAAYagAAAAEIM1y+gpckhoHgesQRAXtN5Wx5KZpqh2QMWUtt/Dik1yi7XLdjDA29ir6IxJffWDXA==", null, false, null, null, null, "59bd704b-d0bb-4da6-861c-786b710779fb", false, null, "user1" },
+                    { 2, 0, null, "1b3838ba-b652-41bb-8036-48741d9340a7", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user2", true, false, false, null, false, null, "USER2", "USER2", null, "AQAAAAIAAYagAAAAEI1XNtUCh6Ru0DP3dn2tyfCWfn6f2Ymgy1Wv5gYvixOz8+IonVsmfqkv6FPjCe7Igw==", null, false, null, null, null, "081d3018-7f5b-4fe6-9489-577d37cc132b", false, null, "user2" },
+                    { 3, 0, null, "05183557-93f1-4a91-8e20-86514be08849", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user3", true, false, false, null, false, null, "USER3", "USER3", null, "AQAAAAIAAYagAAAAEBxnAhHXH/YPoOPjK7P7f05Jvw6pNjKx6qOXKscfkEdpAJt5/qh1+9juFaWeNAdA7w==", null, false, null, null, null, "55126434-b505-4db9-8ff7-8026c26325a1", false, null, "user3" }
                 });
 
             migrationBuilder.InsertData(
@@ -342,6 +366,11 @@ namespace Persistence.Migrations
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Status_UserId",
+                table: "Status",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
@@ -443,6 +472,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "Status");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");

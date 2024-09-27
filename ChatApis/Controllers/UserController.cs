@@ -108,8 +108,8 @@ public class UserController : ControllerBase
         return await _httpResult.Result(result);
     }
 
-    [HttpPost("[action]")]
-    public async Task<IActionResult> SendStatus([FromForm] IFormFile file, [FromForm] string status)
+    [HttpPost("PostStatus")]
+    public async Task<IActionResult> PostStatus([FromForm] IFormFile file, [FromForm] string status)
     {
         var result = await _statusService.PostStatus(file, status);
         return await _httpResult.Result(result);

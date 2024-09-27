@@ -12,8 +12,8 @@ using Persistence.DbContexts;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20240923150958_m1231231231")]
-    partial class m1231231231
+    [Migration("20240925035915_m")]
+    partial class m
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -423,7 +423,7 @@ namespace Persistence.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fa4b5632-6c4e-4dbc-93dd-e2b6f0b81c28",
+                            ConcurrencyStamp = "608f6d5c-e8e1-4196-9511-fbc2e3ead4f6",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user1",
                             EmailConfirmed = true,
@@ -432,9 +432,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1",
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAIAAYagAAAAELztl+shy8PXfb0zr1U/oEjstJ71yG7gp7CfO+yzdd9PiAcTjV2D+GlLlhpsXHMyyg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIM1y+gpckhoHgesQRAXtN5Wx5KZpqh2QMWUtt/Dik1yi7XLdjDA29ir6IxJffWDXA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3912ca18-1256-4b86-9c57-2ef38eb0ba08",
+                            SecurityStamp = "59bd704b-d0bb-4da6-861c-786b710779fb",
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -442,7 +442,7 @@ namespace Persistence.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "47594e47-cb3c-4bb8-b18f-c5ad434dad3f",
+                            ConcurrencyStamp = "1b3838ba-b652-41bb-8036-48741d9340a7",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user2",
                             EmailConfirmed = true,
@@ -451,9 +451,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2",
                             NormalizedUserName = "USER2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIz6RfkvonWH/NlZcU6kpdvyY40Ji7Voe7q25CcUewL+qAWVjl2lF6ISf7KE5g7eRA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEI1XNtUCh6Ru0DP3dn2tyfCWfn6f2Ymgy1Wv5gYvixOz8+IonVsmfqkv6FPjCe7Igw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e403d330-dac6-47e2-a4c3-73f30994c60a",
+                            SecurityStamp = "081d3018-7f5b-4fe6-9489-577d37cc132b",
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -461,7 +461,7 @@ namespace Persistence.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2af7943a-3542-4d30-8369-985760430406",
+                            ConcurrencyStamp = "05183557-93f1-4a91-8e20-86514be08849",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user3",
                             EmailConfirmed = true,
@@ -470,9 +470,9 @@ namespace Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3",
                             NormalizedUserName = "USER3",
-                            PasswordHash = "AQAAAAIAAYagAAAAEISSEP5r9eia/uCUJcC/atfRkc4tK6GmgUjxTNgTHuvtI0hzAoRi4MhLcu45GuIvtA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBxnAhHXH/YPoOPjK7P7f05Jvw6pNjKx6qOXKscfkEdpAJt5/qh1+9juFaWeNAdA7w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bb0cef7d-cd0d-4cb2-a259-0a9ae286b6b2",
+                            SecurityStamp = "55126434-b505-4db9-8ff7-8026c26325a1",
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         });

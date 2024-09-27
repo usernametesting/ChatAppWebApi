@@ -65,6 +65,7 @@ public class HubConnectionsHandler : IHubConnectionsHandler
 
     }
     public async Task OnHasChanges(string connectionId, int userId) =>
-            await hub.Clients.AllExcept(connectionId).SendAsync("OnHasChanges", userId);
+            await hub.Clients.All.SendAsync("OnHasChanges", userId);
+            //await hub.Clients.AllExcept(connectionId).SendAsync("OnHasChanges", userId);
 }
 

@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Services;
 using Application.Abstractions.Services.ControllerServices;
 using Application.Abstractions.Services.ExternalServices;
+using Application.Abstractions.Services.SignalRServices;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.Common;
 using Application.DTOs.SignalRDTOs;
@@ -33,11 +34,12 @@ public class UserService : IUserService
     private readonly RoleManager<AppRole> _roleManager;
     private readonly UserManager<AppUser> _userManager;
     private readonly IUserReadrepository<AppUser, int> userRepo;
+    private readonly IHubConnectionsHandler hubConnectionsHandler;
 
 
 
 
-    public UserService(IUserHelper helper, IUnitOfWork unitOfWork, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IUserReadrepository<AppUser, int> userRepo, IGCService gcService)
+    public UserService(IUserHelper helper, IUnitOfWork unitOfWork, IAutoMapperConfiguration mapper, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IUserReadrepository<AppUser, int> userRepo, IGCService gcService, IHubConnectionsHandler hubConnectionsHandler)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -46,6 +48,7 @@ public class UserService : IUserService
         this.userRepo = userRepo;
         _helper = helper;
         _gcService = gcService;
+        this.hubConnectionsHandler = hubConnectionsHandler;
     }
 
     public async Task<ServiceResult> AddContactAsync(string email)
@@ -103,6 +106,20 @@ public class UserService : IUserService
         }
 
 
+    }
+
+    public async Task<ServiceResult> DeleteContactAsync(int id)
+    {
+        var currentlyUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetCurrentlyUserId());
+        currentlyUser.Contacts!.Remove(currentlyUser.Contacts.FirstOrDefault(c => c.ContactUserId == id)!);
+        await _unitOfWork.Commit();
+
+        return new ServiceResult
+        {
+            StatusCode = HttpStatusCode.OK,
+            Success = true,
+            Message = "contact succsessfully deleted"
+        };
     }
 
     public async Task<ServiceResult<List<AppUser>>> GetAllAsync()
@@ -212,7 +229,7 @@ public class UserService : IUserService
         };
     }
 
-    
+
 
     public async Task<ServiceResult> Recover(int Id)
     {
@@ -318,7 +335,6 @@ public class UserService : IUserService
         var result = new ServiceResult<string>();
         try
         {
-            var a = _helper.GetUserIdByToken();
             var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetUserIdByToken());
             user.ConnectionId = connectionId;
             user.IsOnline = true;
@@ -349,6 +365,21 @@ public class UserService : IUserService
         return result;
     }
 
+    public async Task<ServiceResult> UpdateUserBioAsync(string bio)
+    {
+        var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetCurrentlyUserId());
+        user.Biografy = bio;
+        await _unitOfWork.Commit();
+
+        //await hubConnectionsHandler.OnHasChanges(user.ConnectionId!,user.Id);
+        return new()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Success = true,
+            Message = "Biografy updated"
+        };
+    }
+
     public async Task<ServiceResult<string>> UpdateUserStateOnDisconnectAsync()
     {
         var user = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetUserIdByToken());
@@ -365,5 +396,5 @@ public class UserService : IUserService
             resultObj = user.Id.ToString()
         };
     }
-  
+
 }

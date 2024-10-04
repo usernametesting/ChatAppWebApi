@@ -102,9 +102,7 @@ public class UserController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> PostFile([FromForm] IFormFile file, [FromForm] string message)
     {
-        //var result = await _messageService.PostFile(file, message);
-        var result = await _statusService.PostStatus(file, message);
-
+        var result = await _messageService.PostFile(file, message);
         return await _httpResult.Result(result);
     }
 
@@ -128,6 +126,12 @@ public class UserController : ControllerBase
         var result = await _userService.AddContactAsync(email);
         return await _httpResult.Result(result);
     }
+    [HttpPost("[action]")]
+    public async Task<IActionResult> DeleteContact([FromBody] int id)
+    {
+        var result = await _userService.DeleteContactAsync(id);
+        return await _httpResult.Result(result);
+    }
 
     [HttpPost("[action]")]
     public async Task<IActionResult> Logout()
@@ -135,4 +139,12 @@ public class UserController : ControllerBase
         var result = await _authService.Logut();
         return await _httpResult.Result(result);
     }
+    
+    [HttpPost("[action]")]
+    public async Task<IActionResult> UpdateUserBio([FromBody]string bio)
+    {
+        var result = await _userService.UpdateUserBioAsync(bio);
+        return await _httpResult.Result(result);
+    }
+
 }

@@ -182,7 +182,7 @@ public class AuthService : IAuthService
         user = _mapper.Map<AppUser, CreateUserDTO>(model);
         user.UserName = model.Email.Substring(0, model.Email.IndexOf('@'));
         var result = await _userManager.CreateAsync(user, model.Password);
-        await _userManager.AddToRoleAsync(user, "User");
+        //await _userManager.AddToRoleAsync(user, "User");
         if (result.Succeeded)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -191,7 +191,7 @@ public class AuthService : IAuthService
             await _mailService.SendMail(new SendMailDTO()
             {
                 Email = model.Email,
-                CallBackUrl = $"http://localhost:5205/Account/ConfirmGmail?id={user.Id}&token={WebUtility.UrlEncode(token)}"
+                CallBackUrl = $"http://localhost:27001/Account/ConfirmGmail?id={user.Id}&token={WebUtility.UrlEncode(token)}"
             });
 
             await _notifyService.SendNotification("AdminNotfications", $"{user.UserName} registered");

@@ -9,6 +9,7 @@ public class CurrentlyUser
     public bool IsOnline { get; set; }
     public string? LastActivityDate { get; set; }
     public string? ProfImageUrl{ get; set; }
+    public string? Biografy { get; set; }
 
     public List<Contact> ?Contacts { get; set; }
 }

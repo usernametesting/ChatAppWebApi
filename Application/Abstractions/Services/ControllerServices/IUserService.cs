@@ -27,11 +27,13 @@ public interface IUserService
     Task<ServiceResult<string>> UpdateUserStateOnDisconnectAsync();
 
     Task<ServiceResult> AddContactAsync(string email);
+    Task<ServiceResult> DeleteContactAsync(int id);
 
 
     Task<ServiceResult> Delete(int Id);
     Task<ServiceResult> Recover(int Id);
     Task<ServiceResult> Update(UpdateUserDTO model);
+    Task<ServiceResult> UpdateUserBioAsync(string bio);
 
 
 }

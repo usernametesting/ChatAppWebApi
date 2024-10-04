@@ -7,8 +7,8 @@ namespace Domain.Entities.ConcretEntities;
 
 public class Contact : BaseEntity<int>, IBaseEntity<int>
 {
-    public int UserId { get; set; }
-    public virtual AppUser User { get; set; }
-    public int ContactUserId { get; set; }
-    public virtual AppUser ContactUser { get; set; }
+    public int ?UserId { get; set; }
+    public virtual AppUser ?User { get; set; }
+    public int ?ContactUserId { get; set; }
+    public virtual AppUser? ContactUser { get; set; }
 }

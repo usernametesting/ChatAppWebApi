@@ -14,6 +14,7 @@ public class UserDTO
     public int UnreadMessageCount { get; set; }
     public string? ProfImageUrl { get; set; }
     public string? Email { get; set; }
+    public string? Biografy { get; set; }
 
     public List<MessageDTO>? Messages { get; set; }
     public List<Status> ? Statuses { get; set; }

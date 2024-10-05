@@ -73,6 +73,7 @@ public class UserReadRepository : GenericReadRepository<AppUser, int>, IUserRead
               LastActivityDate = u.LastActivityDate ?? "never signed",
               ProfImageUrl = u.ProfImageUrl,
               Statuses = u.Contacts!.Any(c => c.ContactUserId == senderId) ? u.Statuses!.ToList() : new List<Status>(),
+              Biografy = u.Biografy,
               Messages = _context.UsersMessages
                   .Where(um => (um.FromUserId == u.Id && um.ToUserId == senderId) || (um.ToUserId == u.Id && um.FromUserId == senderId))
                   .Select(um => new MessageDTO

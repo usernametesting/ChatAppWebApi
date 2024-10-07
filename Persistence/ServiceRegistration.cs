@@ -28,6 +28,7 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
+        var serverVersion = new MySqlServerVersion(new Version(8, 0, 23));
         services.AddScoped<UserManager<AppUser>, CustomUserManager<AppUser>>();
 
         services.AddIdentity<AppUser, AppRole>()
@@ -37,7 +38,9 @@ public static class ServiceRegistration
 
         services.AddScoped<DbContext, ProductDbContext>();
         services.AddDbContext<ProductDbContext>(op =>
-                    op.UseSqlServer(configuration.GetConnectionString("default"))
+                    op.UseMySql(configuration.GetConnectionString("default"), serverVersion
+                    //mySqlOptions => mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)
+                    )
                     .UseLazyLoadingProxies());
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

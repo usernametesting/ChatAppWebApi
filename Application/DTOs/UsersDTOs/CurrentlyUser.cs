@@ -10,6 +10,6 @@ public class CurrentlyUser
     public string? LastActivityDate { get; set; }
     public string? ProfImageUrl{ get; set; }
     public string? Biografy { get; set; }
-
+    public virtual ICollection<Status>? Statuses { get; set; }
     public List<Contact> ?Contacts { get; set; }
 }

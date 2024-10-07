@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://192.168.100.9:6422",
+      "applicationUrl": "http://chatroom.space",
       "sslPort": 44368
     }
   },
@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "launchUrl": "",
-      "applicationUrl": "http://192.168.100.9:5179",
+      "applicationUrl": "http://138.197.123.12:5179",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -24,7 +24,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "launchUrl": "",
-      "applicationUrl": "https://localhost:27001;http://localhost:5179",
+      "applicationUrl": "https://localhost:27001;http://localhost:27001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

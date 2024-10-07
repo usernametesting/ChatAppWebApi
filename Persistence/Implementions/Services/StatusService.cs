@@ -28,6 +28,20 @@ public class StatusService : IStatusService
         this.hubConnectionsHandler = hubConnectionsHandler;
     }
 
+    public async Task<ServiceResult> DeleteStatusAsync(int id)
+    {
+        var currentlyUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync(_helper.GetCurrentlyUserId());
+        currentlyUser.Statuses!.Remove(currentlyUser.Statuses.FirstOrDefault(s => s.Id == id)!);
+        await _unitOfWork.Commit();
+
+        return new ServiceResult
+        {
+            StatusCode = HttpStatusCode.OK,
+            Success = true,
+            Message = "contact succsessfully deleted"
+        };
+    }
+
     public async Task<ServiceResult> PostStatus(IFormFile file, string status)
     {
         var options = new JsonSerializerOptions

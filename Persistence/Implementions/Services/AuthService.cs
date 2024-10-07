@@ -57,7 +57,17 @@ public class AuthService : IAuthService
 
     public async Task<IServiceResult> LoginAsync(LoginUserDTO model)
     {
-        AppUser user = await _userManager?.FindByEmailAsync(model.Email)!;
+        AppUser user;
+        try
+        {
+        user = await _userManager?.FindByEmailAsync(model.Email)!;
+
+        }
+        catch (Exception e)
+        {
+
+            throw;
+        }
 
         if (user == null)
             return new ServiceResult()

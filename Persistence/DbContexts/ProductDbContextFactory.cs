@@ -14,10 +14,11 @@ namespace Persistence.DbContexts
 
         public ProductDbContextFactory()
         {
-            
+
         }
         public ProductDbContext CreateDbContext(string[] args)
         {
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 23));
             var optionsBuilder = new DbContextOptionsBuilder<ProductDbContext>();
 
             IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -26,7 +27,10 @@ namespace Persistence.DbContexts
                 .Build();
 
             var connectionString = configuration.GetConnectionString("default");
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseMySql(connectionString, serverVersion,
+                mySqlOptions => mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)
+                );
+
 
             return new ProductDbContext(optionsBuilder.Options);
         }

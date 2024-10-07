@@ -106,6 +106,8 @@ public class UserController : ControllerBase
         return await _httpResult.Result(result);
     }
 
+   
+
     [HttpPost("PostStatus")]
     public async Task<IActionResult> PostStatus([FromForm] IFormFile file, [FromForm] string status)
     {
@@ -147,4 +149,10 @@ public class UserController : ControllerBase
         return await _httpResult.Result(result);
     }
 
+    [HttpPost("[action]")]
+    public async Task<IActionResult> DeleteStatus([FromBody] int id)
+    {
+        var result = await _statusService.DeleteStatusAsync(id);
+        return await _httpResult.Result(result);
+    }
 }

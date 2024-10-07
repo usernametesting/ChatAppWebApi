@@ -35,20 +35,25 @@ public class MessageService : IMessageService
     public async Task<ServiceResult> PostMessageToUserAsync(MessageDTO model)
     {
         var userMessages = _unitOfWork.GetWriteRepository<UsersMessages, int>();
+
+        var msg = new Message()
+        {
+            CreatedDate = DateTime.Now,
+            UpdatedDate = DateTime.Now,
+            Content = model.Message,
+            MessageType = model.MessageType,
+            State = model.State
+        };
+
+
+
         await userMessages.AddAsync(new()
         {
             CreatedDate = DateTime.UtcNow,
             FromUserId = _helper.GetCurrentlyUserId(),
             ToUserId = (int)model.ToUserId!,
-            Message = new Message()
-            {
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now,
-                Content = model.Message,
-                MessageType = model.MessageType,
-                State = model.State
-
-            }
+            Message = msg,
+            MessageId = msg.Id
         });
 
         var toUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync((int)model.ToUserId);
@@ -91,7 +96,7 @@ public class MessageService : IMessageService
         };
     }
 
-    public async Task<ServiceResult> PostFile(IFormFile file,string message)
+    public async Task<ServiceResult> PostFile(IFormFile file, string message)
     {
         var options = new JsonSerializerOptions
         {
@@ -102,20 +107,22 @@ public class MessageService : IMessageService
         var url = await _gcService.UploadFileAsync(file, file.FileName);
 
         var userMessages = _unitOfWork.GetWriteRepository<UsersMessages, int>();
+        var msg = new Message()
+        {
+            CreatedDate = DateTime.Now,
+            UpdatedDate = DateTime.Now,
+            Content = url,
+            MessageType = model.MessageType,
+            State = model.State
+
+        };
         await userMessages.AddAsync(new()
         {
             CreatedDate = DateTime.UtcNow,
             FromUserId = _helper.GetCurrentlyUserId(),
             ToUserId = (int)model.ToUserId!,
-            Message = new Message()
-            {
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now,
-                Content = url,
-                MessageType = model.MessageType,
-                State = model.State
-
-            }
+            Message = msg,
+            MessageId = msg.Id
         });
 
         var toUser = await _unitOfWork.GetReadRepository<AppUser, int>().GetByIdAsync((int)model.ToUserId);
@@ -132,4 +139,6 @@ public class MessageService : IMessageService
             StatusCode = HttpStatusCode.OK,
         };
     }
+
+
 }

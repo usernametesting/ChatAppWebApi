@@ -67,8 +67,7 @@ namespace ChatApis
 
             var app = builder.Build();
 
-            builder.WebHost.UseUrls("http://*:5089");
-
+            app.Urls.Add("http://0.0.0.0:5089");
             app.UseCors("AllowOrigin");
             app.UseHttpsRedirection();
 

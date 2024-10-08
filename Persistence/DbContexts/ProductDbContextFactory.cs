@@ -27,9 +27,11 @@ namespace Persistence.DbContexts
                 .Build();
 
             var connectionString = configuration.GetConnectionString("default");
-            optionsBuilder.UseMySql(connectionString, serverVersion,
-                mySqlOptions => mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)
-                );
+            //optionsBuilder.UseMySql(connectionString, serverVersion,
+            //    mySqlOptions => mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)
+            //    );
+
+            optionsBuilder.UseSqlServer(connectionString);
 
 
             return new ProductDbContext(optionsBuilder.Options);

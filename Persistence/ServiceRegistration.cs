@@ -37,11 +37,17 @@ public static class ServiceRegistration
           .AddDefaultTokenProviders();
 
         services.AddScoped<DbContext, ProductDbContext>();
+        //services.AddDbContext<ProductDbContext>(op =>
+        //            op.UseMySql(configuration.GetConnectionString("default"), serverVersion
+        //            //mySqlOptions => mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)
+        //            )
+        //            .UseLazyLoadingProxies());
+
+        var st = configuration.GetConnectionString("default");
+
         services.AddDbContext<ProductDbContext>(op =>
-                    op.UseMySql(configuration.GetConnectionString("default"), serverVersion
-                    //mySqlOptions => mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)
-                    )
-                    .UseLazyLoadingProxies());
+                   op.UseSqlServer(configuration.GetConnectionString("default"))
+                   .UseLazyLoadingProxies());
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAuthService, AuthService>();

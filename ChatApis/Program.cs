@@ -33,38 +33,18 @@ namespace ChatApis
             //Presentation dependencies
             builder.Services.AddPresentationService(builder.Configuration);
 
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowOrigin",
-            //        builder =>
-            //        {
-            //            builder.SetIsOriginAllowed(origin => true)
-            //                   .AllowAnyMethod()
-            //                   .AllowAnyHeader()
-            //                   .AllowCredentials();
-            //        });
-            //});
-
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin", policy =>
-                {
-                    policy.WithOrigins("https://parvinnn.netlify.app")
-                          .AllowAnyMethod()
-                          .AllowAnyHeader()
-                          .AllowCredentials();
-                });
+                options.AddPolicy("AllowOrigin",
+                    builder =>
+                    {
+                        builder.SetIsOriginAllowed(origin => true)
+                               .AllowAnyMethod()
+                               .AllowAnyHeader()
+                               .AllowCredentials();
+                    });
             });
-
-
-
             //var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);
-            //var securityKey = builder.Configuration["Token:SecurityKey"];
-            //if (string.IsNullOrEmpty(securityKey))
-            //{
-            //    throw new ArgumentNullException("SecurityKey", "Token SecurityKey is not configured.");
-            //}
-            var key = Encoding.UTF8.GetBytes("llkwerlkw378246837ijshdfkjshasdasaadasdasdadadsasdasdsadsasdasdad");
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -75,27 +55,23 @@ namespace ChatApis
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("llkwerlkw378246837ijshdfkjshasdasaadasdasdadadsasdasdsadsasdasdad")),
+                    ValidateIssuer = false, 
+                    ValidateAudience = false, 
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero 
                 };
             });
 
             builder.Services.AddHttpContextAccessor();
-            //builder.WebHost.ConfigureKestrel(serverOptions =>
-            //{
-            //    serverOptions.ListenAnyIP(5089); 
-            //});
 
             var app = builder.Build();
 
-            //app.Urls.Add("http://*:5089");
-            app.Urls.Add("http://0.0.0.0:5000");
+            //builder.WebHost.UseUrls("http://*:5089");
+            app.Urls.Add("https://0.0.0.0:5000");
 
-            app.UseCors("AllowSpecificOrigin");
 
+            app.UseCors("AllowOrigin");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

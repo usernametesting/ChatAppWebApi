@@ -64,14 +64,14 @@ namespace ChatApis
             });
 
             builder.Services.AddHttpContextAccessor();
-            builder.WebHost.ConfigureKestrel(serverOptions =>
-            {
-                serverOptions.ListenAnyIP(5089); 
-            });
+            //builder.WebHost.ConfigureKestrel(serverOptions =>
+            //{
+            //    serverOptions.ListenAnyIP(5089); 
+            //});
 
             var app = builder.Build();
 
-            app.Urls.Add("http://*:5089");
+            //app.Urls.Add("http://*:5089");
 
             app.UseCors("AllowOrigin");
             app.UseHttpsRedirection();

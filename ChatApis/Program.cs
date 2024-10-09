@@ -33,29 +33,17 @@ namespace ChatApis
             //Presentation dependencies
             builder.Services.AddPresentationService(builder.Configuration);
 
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowOrigin",
-            //        builder =>
-            //        {
-            //            builder.SetIsOriginAllowed(origin => true)
-            //                   .AllowAnyMethod()
-            //                   .AllowAnyHeader()
-            //                   .AllowCredentials();
-            //        });
-            //});
-
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin", policy =>
-                {
-                    policy.WithOrigins("https://parvinnn.netlify.app")
-                          .AllowAnyMethod()
-                          .AllowAnyHeader()
-                          .AllowCredentials();
-                });
+                options.AddPolicy("AllowOrigin",
+                    builder =>
+                    {
+                        builder.SetIsOriginAllowed(origin => true)
+                               .AllowAnyMethod()
+                               .AllowAnyHeader()
+                               .AllowCredentials();
+                    });
             });
-
             //var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);
             builder.Services.AddAuthentication(options =>
             {
@@ -83,7 +71,7 @@ namespace ChatApis
             app.Urls.Add("https://0.0.0.0:5000");
 
 
-            app.UseCors("AllowSpecificOrigin");
+            app.UseCors("AllowOrigin");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

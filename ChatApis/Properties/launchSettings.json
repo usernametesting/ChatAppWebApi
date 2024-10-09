@@ -8,34 +8,45 @@
       "sslPort": 44368
     }
   },
-  "profiles": {
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "",
-      "applicationUrl": "http://138.197.123.12:5179",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "https": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "",
-      "applicationUrl": "https://192.168.100.9:27001;http://192.168.100.9:27002",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": false,
-      "launchUrl": "",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+  "http": {
+    "commandName": "Project",
+    "dotnetRunMessages": true,
+    "launchBrowser": false,
+    "launchUrl": "",
+    "applicationUrl": "http://20.40.49.15:5089",
+    "environmentVariables": {
+      "ASPNETCORE_ENVIRONMENT": "Development"
     }
   }
+
+  //"profiles": {
+  //  "http": {
+  //    "commandName": "Project",
+  //    "dotnetRunMessages": true,
+  //    "launchBrowser": false,
+  //    "launchUrl": "",
+  //    "applicationUrl": "http://138.197.123.12:5179",
+  //    "environmentVariables": {
+  //      "ASPNETCORE_ENVIRONMENT": "Development"
+  //    }
+  //  },
+  //  "https": {
+  //    "commandName": "Project",
+  //    "dotnetRunMessages": true,
+  //    "launchBrowser": false,
+  //    "launchUrl": "",
+  //    "applicationUrl": "https://192.168.100.9:27001;http://192.168.100.9:27002",
+  //    "environmentVariables": {
+  //      "ASPNETCORE_ENVIRONMENT": "Development"
+  //    }
+  //  },
+  //  "IIS Express": {
+  //    "commandName": "IISExpress",
+  //    "launchBrowser": false,
+  //    "launchUrl": "",
+  //    "environmentVariables": {
+  //      "ASPNETCORE_ENVIRONMENT": "Development"
+  //    }
+  //  }
+}
 }

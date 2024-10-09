@@ -56,7 +56,6 @@ namespace ChatApis
                 });
             });
 
-            app.UseCors("AllowSpecificOrigin");
 
 
             //var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);

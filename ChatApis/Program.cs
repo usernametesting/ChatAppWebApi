@@ -96,6 +96,7 @@ namespace ChatApis
             app.Urls.Add("http://0.0.0.0:5000");
 
             app.UseCors("AllowSpecificOrigin");
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

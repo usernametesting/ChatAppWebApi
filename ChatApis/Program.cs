@@ -33,16 +33,27 @@ namespace ChatApis
             //Presentation dependencies
             builder.Services.AddPresentationService(builder.Configuration);
 
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowOrigin",
+            //        builder =>
+            //        {
+            //            builder.SetIsOriginAllowed(origin => true)
+            //                   .AllowAnyMethod()
+            //                   .AllowAnyHeader()
+            //                   .AllowCredentials();
+            //        });
+            //});
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowOrigin",
-                    builder =>
-                    {
-                        builder.SetIsOriginAllowed(origin => true)
-                               .AllowAnyMethod()
-                               .AllowAnyHeader()
-                               .AllowCredentials();
-                    });
+                options.AddPolicy("AllowOrigin", policyBuilder =>
+                {
+                    policyBuilder.WithOrigins("http://localhost:5173")
+                                 .AllowAnyMethod()
+                                 .AllowAnyHeader()
+                                 .AllowCredentials();
+                });
             });
             //var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);
             //var securityKey = builder.Configuration["Token:SecurityKey"];
@@ -62,10 +73,10 @@ namespace ChatApis
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false, 
-                    ValidateAudience = false, 
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero 
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 

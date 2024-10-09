@@ -64,6 +64,10 @@ namespace ChatApis
             });
 
             builder.Services.AddHttpContextAccessor();
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(5089); 
+            });
 
             var app = builder.Build();
 

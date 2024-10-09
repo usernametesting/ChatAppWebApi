@@ -49,7 +49,7 @@ namespace ChatApis
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
+                    policy.WithOrigins("https://parvinnn.netlify.app")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials();

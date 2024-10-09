@@ -47,13 +47,17 @@ namespace ChatApis
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", policy =>
+                options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    policy.AllowAnyOrigin()
+                    policy.WithOrigins("http://localhost:5173")
                           .AllowAnyMethod()
-                          .AllowAnyHeader();
+                          .AllowAnyHeader()
+                          .AllowCredentials();
                 });
             });
+
+            app.UseCors("AllowSpecificOrigin");
+
 
             //var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);
             //var securityKey = builder.Configuration["Token:SecurityKey"];
@@ -91,7 +95,7 @@ namespace ChatApis
             //app.Urls.Add("http://*:5089");
             app.Urls.Add("http://0.0.0.0:5000");
 
-            app.UseCors("AllowAll");
+            app.UseCors("AllowSpecificOrigin");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

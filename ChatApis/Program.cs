@@ -45,12 +45,12 @@ namespace ChatApis
                     });
             });
             //var key = Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]!);
-            var securityKey = builder.Configuration["Token:SecurityKey"];
-            if (string.IsNullOrEmpty(securityKey))
-            {
-                throw new ArgumentNullException("SecurityKey", "Token SecurityKey is not configured.");
-            }
-            var key = Encoding.UTF8.GetBytes(securityKey);
+            //var securityKey = builder.Configuration["Token:SecurityKey"];
+            //if (string.IsNullOrEmpty(securityKey))
+            //{
+            //    throw new ArgumentNullException("SecurityKey", "Token SecurityKey is not configured.");
+            //}
+            var key = Encoding.UTF8.GetBytes("llkwerlkw378246837ijshdfkjshasdasaadasdasdadadsasdasdsadsasdasdad");
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

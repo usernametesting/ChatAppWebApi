@@ -7,46 +7,46 @@
       "applicationUrl": "http://localhost:5179",
       "sslPort": 44368
     }
-  }
-  //"http": {
-  //  "commandName": "Project",
-  //  "dotnetRunMessages": true,
-  //  "launchBrowser": false,
-  //  "launchUrl": "",
-  //  "applicationUrl": "http://20.40.49.15:5090",
-  //  "environmentVariables": {
-  //    "ASPNETCORE_ENVIRONMENT": "Development"
-  //  }
-  //}
+  },
+  "http": {
+    "commandName": "Project",
+    "dotnetRunMessages": true,
+    "launchBrowser": false,
+    "launchUrl": "",
+    "applicationUrl": "http://localhost:5090",
+    "environmentVariables": {
+      "ASPNETCORE_ENVIRONMENT": "Development"
+    }
+  },
 
-  //"profiles": {
-  //  "http": {
-  //    "commandName": "Project",
-  //    "dotnetRunMessages": true,
-  //    "launchBrowser": false,
-  //    "launchUrl": "",
-  //    "applicationUrl": "http://138.197.123.12:5179",
-  //    "environmentVariables": {
-  //      "ASPNETCORE_ENVIRONMENT": "Development"
-  //    }
-  //  },
-  //  "https": {
-  //    "commandName": "Project",
-  //    "dotnetRunMessages": true,
-  //    "launchBrowser": false,
-  //    "launchUrl": "",
-  //    "applicationUrl": "https://192.168.100.9:27001;http://192.168.100.9:27002",
-  //    "environmentVariables": {
-  //      "ASPNETCORE_ENVIRONMENT": "Development"
-  //    }
-  //  },
-  //  "IIS Express": {
-  //    "commandName": "IISExpress",
-  //    "launchBrowser": false,
-  //    "launchUrl": "",
-  //    "environmentVariables": {
-  //      "ASPNETCORE_ENVIRONMENT": "Development"
-  //    }
-  //  }
-}
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "",
+      "applicationUrl": "http://localhost:5179",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "",
+      "applicationUrl": "https://localhost:27001;http://localhost:27002",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": false,
+      "launchUrl": "https://localhost:27001/api/Test/foo",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
 }

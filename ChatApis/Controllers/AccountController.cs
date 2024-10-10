@@ -3,6 +3,7 @@ using Application.DTOs.AuthDTOs;
 using Application.DTOs.Tokens;
 using ChatApis.Helpers;
 using ETicaretAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,5 +65,11 @@ public class AccountController : ControllerBase
     [HttpGet("AccessDenied")]
     public IActionResult AccessDenied() =>
     Unauthorized("You do not have permission");
+    
+    
+    [HttpGet("foo")]
+    [AllowAnonymous]
+    public IActionResult foo() =>
+   Unauthorized("You do not have permission");
 
 }
